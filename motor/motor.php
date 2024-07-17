@@ -78,14 +78,14 @@ add_shortcode('insotel_motor_experiencias', 'insotel_motor_experiencias_shortcod
 
 function insotel_motor_experiencias_shortcode($atts)
 {
-    $id_experiencia = intval($atts['id_experiencia']);
-    $tipo_experiencia = intval($atts['tipo_experiencia']);
+    $id_servicio = intval($atts['id_servicio']);
+    $tipo_servicio = intval($atts['tipo_servicio']);
 
     $atts = shortcode_atts(
         array(
             'modo' => "modo_experiencias",
-            'id_experiencias' =>  $id_experiencia,
-            'tipo_experiencia' =>  $tipo_experiencia,
+            'id_servicio' =>  $id_servicio,
+            'tipo_servicio' =>  $tipo_servicio,
         ),
         $atts,
         'insotel_motor_experiencias'

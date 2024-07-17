@@ -1,11 +1,11 @@
 <?php
-$id_experiencia = "";
-$tipo_experiencia = "";
+$id_servicio = "";
+$tipo_servicio = "";
 
 if (isset($atts)) {
     $modo = $atts['modo'];
-    $id_experiencia = $atts['id_experiencias'];
-    $tipo_experiencia = $atts['tipo_experiencia'];
+    $id_servicio = $atts['id_servicio'];
+    $tipo_servicio = $atts['tipo_servicio'];
 }
 
 
@@ -257,8 +257,8 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
     <input type="hidden" name="canalreserva" id="canalreserva" value="<?php echo $constantes->canal_reserva; ?>">
     <input type="hidden" name="origin" id="origin" value="<?php echo $constantes->origen; ?>">
 
-    <input type="hidden" name="id_experiencia" id="id_experiencia" value="<?php echo $id_experiencia; ?>">
-    <input type="hidden" name="tipo_experiencia" id="tipo_experiencia" value="<?php echo $tipo_experiencia; ?>">
+    <input type="hidden" name="id_servicio" id="id_servicio" value="<?php echo $id_servicio; ?>">
+    <input type="hidden" name="tipo_servicio" id="tipo_servicio" value="<?php echo $tipo_servicio; ?>">
 
     <div id="divreservas">
 

@@ -75,24 +75,22 @@ function idavuelta() {
 }
 
 function loadDatePicker(dateGeneral, dateFechas, dateIdioma) {
-  setTimeout(() => {
-    var combinedConfig = $.extend(
-      {
-        singleDatePicker: idavuelta(),
-      },
-      dateGeneral,
-      dateFechas,
-      dateIdioma
-    );
+  var combinedConfig = $.extend(
+    {
+      singleDatePicker: idavuelta(),
+    },
+    dateGeneral,
+    dateFechas,
+    dateIdioma
+  );
 
-    // Inicializa el daterangepicker con la configuración combinada
-    $("#booking-form #fecha-viaje").daterangepicker(
-      combinedConfig,
-      function (start, end, label) {
-        // callback function
-      }
-    );
-  }, 2000);
+  // Inicializa el daterangepicker con la configuración combinada
+  $("#booking-form #fecha-viaje").daterangepicker(
+    combinedConfig,
+    function (start, end, label) {
+      // callback function
+    }
+  );
 }
 
 /*DENTO DE ESTA FUNCIÓN ESTAN EL SUBMIT DEL FORMULARIO */
@@ -222,8 +220,7 @@ function loadEventListeners(
     let marca = $("#booking-form #marca").val();
     $.ajax({
       type: "POST",
-      url:
-        "/wp-content/plugins/motor/public/modelos.php?marca=" + marca,
+      url: "/wp-content/plugins/motor/public/modelos.php?marca=" + marca,
       success: function (response) {
         $("#booking-form #modelo").html(response).fadeIn();
       },
@@ -356,5 +353,3 @@ function calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros) {
 
   $("#booking-form #numpasajeros").val(numpasajeros);
 }
-
-
