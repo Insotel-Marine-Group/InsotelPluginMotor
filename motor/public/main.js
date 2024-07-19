@@ -1,3 +1,54 @@
+const obtenerRutasCoincidentes = (puertoRutaIdaSeleccionada, todasLasRutas) => {
+  // Filtramos todas las rutas para encontrar aquellas que coinciden con el puerto de ruta ida seleccionado
+  const rutasCoincidentes = todasLasRutas.filter(
+    (ruta) => ruta.puerto_ruta_ida === puertoRutaIdaSeleccionada
+  );
+  // Devolvemos las rutas coincidentes
+  return rutasCoincidentes;
+};
+
+const convertirPuertosAObjeto = (puertos) => {
+  return puertos.reduce((acc, puerto) => {
+    acc[puerto.nombre] = puerto.valor;
+    return acc;
+  }, {});
+};
+
+const convertirRutasAObjeto = (rutas, puertos) => {
+  return rutas.reduce((acc, ruta) => {
+    const puerto = puertos.find((p) => p.id === ruta.puerto_ruta_vuelta);
+    acc[puerto.nombre] = puerto.valor;
+    return acc;
+  }, {});
+};
+
+function setRutasValueInSelect(idOrigen, idDestino, puertos, rutas) {
+  const optionsOrigen = convertirPuertosAObjeto(puertos);
+  const selectOrigen = document.querySelector(`#${idOrigen}`);
+  selectOrigen.innerHTML = "";
+
+  Object.entries(optionsOrigen).forEach(([key, value]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = key;
+    selectOrigen.appendChild(option);
+  });
+
+  const optionsDestino = convertirRutasAObjeto(
+    obtenerRutasCoincidentes(puertos[0].id, rutas),
+    puertos
+  );
+  const selectDestino = document.querySelector(`#${idDestino}`);
+  selectDestino.innerHTML = "";
+
+  Object.entries(optionsDestino).forEach(([key, value]) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = key;
+    selectDestino.appendChild(option);
+  });
+}
+
 function paramsByDatepicker(lang, dateActually) {
   let datas = {};
 
@@ -74,15 +125,31 @@ function idavuelta() {
   }
 }
 
-function loadDatePicker(dateGeneral, dateFechas, dateIdioma) {
-  var combinedConfig = $.extend(
-    {
-      singleDatePicker: idavuelta(),
-    },
-    dateGeneral,
-    dateFechas,
-    dateIdioma
-  );
+function loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario) {
+  var combinedConfig;
+
+  if (tipo_calendario != "") {
+    let singleDatePicker = false;
+    if (tipo_calendario === "single") singleDatePicker = true;
+
+    var combinedConfig = $.extend(
+      {
+        singleDatePicker: singleDatePicker,
+      },
+      dateGeneral,
+      dateFechas,
+      dateIdioma
+    );
+  } else {
+    var combinedConfig = $.extend(
+      {
+        singleDatePicker: idavuelta(),
+      },
+      dateGeneral,
+      dateFechas,
+      dateIdioma
+    );
+  }
 
   // Inicializa el daterangepicker con la configuración combinada
   $("#booking-form #fecha-viaje").daterangepicker(
@@ -94,138 +161,58 @@ function loadDatePicker(dateGeneral, dateFechas, dateIdioma) {
 }
 
 /*DENTO DE ESTA FUNCIÓN ESTAN EL SUBMIT DEL FORMULARIO */
-function loadEventListeners(
-  urlMotor,
-  idioma,
-  dateGeneral,
-  dateFechas,
-  dateIdioma
-) {
-  /*Cuando cambiar entre ida o ida y vuelta*/
-  $("#booking-form #idavue").change(function () {
-    loadDatePicker(dateGeneral, dateFechas, dateIdioma);
-  });
-
-  /*Cuando cambia el origen*/
-  $("#booking-form #origen").change(function () {
-    let newOptions;
-    ori = $("#booking-form #origen").val();
-    if (ori == "ibi") {
-      // Mallorca
-      newOptions = {
-        Formentera: "for",
-      };
-      $("#booking-form").attr(
-        "action",
-        `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`
-      );
-    } else if (ori == "for") {
-      // Menorca
-      newOptions = {
-        Ibiza: "ibi",
-      };
-
-      $("#booking-form").attr(
-        "action",
-        `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`
-      );
-    } else {
-      newOptions = {
-        Ibiza: "ibi",
-        Formentera: "for",
-      };
-
-      $("#booking-form").attr(
-        "action",
-        `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`
-      );
-    }
-
-    let $el = $("#booking-form #destino");
-    $el.empty(); // remove old options
-    $.each(newOptions, function (key, value) {
-      $el.append($("<option></option>").attr("value", value).text(key));
-    });
-
-    loadDatePicker(dateGeneral, dateFechas, dateIdioma);
-  });
-
-  /*Cuando cambia el destino*/
-  $("#booking-form #destino").change(function () {
-    loadDatePicker(dateGeneral, dateFechas, dateIdioma);
-  });
-
-  /*Cuando hace focus en el codigo promocional*/
-  $("#booking-form #promo").focus(function () {
-    return false;
-  });
-
-  /*Cuando clicka en el div de los pasajeros para que se despliegue*/
-  $("#booking-form #divpersonas").click(function (e) {
-    $("#booking-form #divocupacion").slideDown();
-    e.stopPropagation();
-  });
-
-  $("#booking-form #divocupacion").click(function (e) {
-    e.stopPropagation();
-  });
-
-  /*Cuando clicka en el boton de aceptar en el dropdown de pasajeros para que se cierre*/
-  $("#booking-form #aceptarocu").click(function () {
-    $("#booking-form #divocupacion").slideUp();
-  });
-
-  /*Cuando cambia el vehiculo para que pueda seleccionar las marcas o no*/
-  $("#booking-form #vehiculo").change(function () {
-    let vehiculo = $("#booking-form #vehiculo").val();
-    if (
-      vehiculo == "turismo" ||
-      vehiculo == "remolque" ||
-      vehiculo == "electrico" ||
-      vehiculo == "hibrido"
-    ) {
-      $("#booking-form #divmarca").removeClass("disabled");
-      $("#booking-form #marca").attr("disabled", false);
-    } else if (vehiculo == "otros") {
-      $("#aviso-vehiculosnoinc").fadeIn(600);
-    } else if (vehiculo == "furgoneta") {
-      $("#aviso-furgonetas").fadeIn(600);
-      $("#booking-form #divmarca").removeClass("disabled");
-      $("#booking-form #marca").attr("disabled", false);
-    } else {
-      $("#booking-form #divmarca").addClass("disabled");
-      $("#booking-form #marca").attr("disabled", true);
-      $("#booking-form #divmodelo").addClass("disabled");
-      $("#booking-form #modelo").attr("disabled", true);
-    }
-
-    if (
-      vehiculo == "" ||
-      vehiculo == "bicicleta" ||
-      vehiculo == "motocicleta" ||
-      vehiculo == "ciclomotor"
-    ) {
-      $("#booking-form #marca").val("");
-      $("#booking-form #modelo").val("");
-    }
-  });
-
+function loadEventListeners(urlMotor, idioma) {
   /*Cuando cambia la marca*/
-  $("#booking-form #marca").change(function () {
-    $("#booking-form #divmodelo").removeClass("disabled");
-    $("#booking-form #modelo").attr("disabled", false);
+  // $("#booking-form #marca").change(function () {
+  //   $("#booking-form #divmodelo").removeClass("disabled");
+  //   $("#booking-form #modelo").attr("disabled", false);
 
-    $("#booking-form #modelo").empty();
+  //   $("#booking-form #modelo").empty();
 
-    let marca = $("#booking-form #marca").val();
-    $.ajax({
-      type: "POST",
-      url: "/wp-content/plugins/motor/public/modelos.php?marca=" + marca,
-      success: function (response) {
-        $("#booking-form #modelo").html(response).fadeIn();
-      },
-    });
-  });
+  //   let marca = $("#booking-form #marca").val();
+  //   $.ajax({
+  //     type: "POST",
+  //     url: "/wp-content/plugins/motor/public/modelos.php?marca=" + marca,
+  //     success: function (response) {
+  //       $("#booking-form #modelo").html(response).fadeIn();
+  //     },
+  //   });
+  // });
+  if (document.querySelector("#booking-form #marca") != undefined) {
+    document
+      .querySelector("#booking-form #marca")
+      .addEventListener("change", function () {
+        const marcaSelect = document.querySelector("#booking-form #marca");
+        const divModelo = document.querySelector("#booking-form #divmodelo");
+        const modeloSelect = document.querySelector("#booking-form #modelo");
+
+        // Habilita el contenedor y el select de modelo
+        divModelo.classList.remove("disabled");
+        modeloSelect.disabled = false;
+
+        // Limpia el contenido del select de modelo
+        modeloSelect.innerHTML = "";
+
+        // Obtén el valor seleccionado en el select de marca
+        const marca = marcaSelect.value;
+        // Construye la URL para la solicitud nuevo-test/wordpress-6.2.1-es_ES
+        const url = `/wp-content/plugins/motor/public/modelos.php?marca=${marca}`;
+
+        // Realiza una solicitud POST usando fetch
+        fetch(url, {
+          method: "POST",
+        })
+          .then((response) => response.text()) // Convierte la respuesta a texto
+          .then((data) => {
+            // Actualiza el select de modelo con la respuesta y muestra el select
+            modeloSelect.innerHTML = data;
+            modeloSelect.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      });
+  }
 
   /*Cuando clicka el switch para que se vean las opciones del vehiculo*/
   $("#booking-form #switchViajo").change(function (e) {
@@ -284,46 +271,75 @@ function loadEventListeners(
     }
   });
 
-  /*Cuando clicka en reservar esto seria el metodo SUBMIT*/
-  $("#booking-form #botonbuscar").click(function (ev) {
-    console.log("Has clickado el boton de buscar reserva");
-    fechas = $("#booking-form #fecha-viaje").val();
-    fechasarray = fechas.split("-");
-    fechaini = $.trim(fechasarray[0]);
-    fechafin = $.trim(fechasarray[1]);
+  // Selecciona el botón de buscar
+  document
+    .querySelector("#booking-form #botonbuscar")
+    .addEventListener("click", function (ev) {
+      // Imprime un mensaje en la consola
+      console.log("Has clickado el boton de buscar reserva");
 
-    diaini = fechaini.substring(0, 2);
-    mesini = fechaini.substring(3, 5);
-    anoini = fechaini.substring(6, 10);
-    diafin = fechafin.substring(0, 2);
-    mesfin = fechafin.substring(3, 5);
-    anofin = fechafin.substring(6, 10);
+      // Obtén el valor del campo de fecha
+      const fechas = document.querySelector("#booking-form #fecha-viaje").value;
+      console.log(fechas);
+      if (fechas.includes("-")) {
+        const fechasArray = fechas.split("-");
+        const fechaini = fechasArray[0].trim();
+        const fechafin = fechasArray[1].trim();
 
-    $("#booking-form #fechaini").val(diaini + "-" + mesini + "-" + anoini);
-    $("#booking-form #fechafin").val(diafin + "-" + mesfin + "-" + anofin);
+        // Extrae el día, mes y año de las fechas
+        const diaini = fechaini.substring(0, 2);
+        const mesini = fechaini.substring(3, 5);
+        const anoini = fechaini.substring(6, 10);
+        const diafin = fechafin.substring(0, 2);
+        const mesfin = fechafin.substring(3, 5);
+        const anofin = fechafin.substring(6, 10);
 
-    $("#booking-form").attr(
-      "action",
-      `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`
-    );
+        // Asigna las fechas formateadas a los campos de entrada
+        document.querySelector(
+          "#booking-form #fechaini"
+        ).value = `${diaini}-${mesini}-${anoini}`;
+        document.querySelector(
+          "#booking-form #fechafin"
+        ).value = `${diafin}-${mesfin}-${anofin}`;
+      } else {
+        const diaini = fechas.substring(0, 2);
+        const mesini = fechas.substring(3, 5);
+        const anoini = fechas.substring(6, 10);
 
-    if (!$("#booking-form #switchFamilia").is(":checked")) {
-      $("#booking-form #familia").val("");
-    }
-    if ($("#booking-form #switchMascotas").is(":checked")) {
-      $("#booking-form #mascotas").val("1");
-    }
-    if ($("#booking-form #switchViajo").is(":checked")) {
-      $("#booking-form").attr(
-        "action",
-        `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`
-      );
-    } else {
-      $("#booking-form #vehiculo").val("");
-    }
+        document.querySelector(
+          "#booking-form #fechaini"
+        ).value = `${diaini}-${mesini}-${anoini}`;
 
-    $("#booking-form").submit();
-  });
+        document.querySelector(
+          "#booking-form #fechafin"
+        ).value = `${diaini}-${mesini}-${anoini}`;
+      }
+
+      // Establece la acción del formulario
+      document.querySelector(
+        "#booking-form"
+      ).action = `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`;
+
+      // Verifica el estado de los switches y actualiza los valores del formulario
+      if (document.querySelector("#booking-form #switchFamilia") != undefined) {
+        if (!document.querySelector("#booking-form #switchFamilia").checked) {
+          document.querySelector("#booking-form #familia").value = "";
+        }
+      }
+
+      if (document.querySelector("#booking-form #switchViajo") != undefined) {
+        if (document.querySelector("#booking-form #switchViajo").checked) {
+          document.querySelector(
+            "#booking-form"
+          ).action = `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`;
+        } else {
+          document.querySelector("#booking-form #vehiculo").value = "";
+        }
+      }
+
+      // Envía el formulario
+      document.querySelector("#booking-form").submit();
+    });
 }
 
 function updateDate() {

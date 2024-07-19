@@ -14,12 +14,12 @@
                     <div class="col">
                         <div class="w-100 border-1">SHORTCODES</div>
                         <div class="w-100 border-1">[insotel_motor]</div>
-                        <div class="w-100 border-1">[insotel_motor_experiencias]</div>
+                        <div class="w-100 border-1">[insotel_motor_servicios]</div>
                     </div>
                     <div class="col">
                         <div class="w-100 border-1">PARAMETROS DE SHORTCODES</div>
                         <div class="w-100 border-1">no tiene parametros</div>
-                        <div class="w-100 border-1">[id_experiencias="99" tipo_experiencia="88"]</div>
+                        <div class="w-100 border-1">[id_servicio="1006" tipo_servicio="EXPERIENCIAS" tipo_calendario="single"]</div>
                     </div>
                 </div>
             </div>

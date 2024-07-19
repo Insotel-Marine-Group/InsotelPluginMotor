@@ -1,14 +1,13 @@
 <?php
 $id_servicio = "";
 $tipo_servicio = "";
-
+$tipo_calendario = "";
 if (isset($atts)) {
     $modo = $atts['modo'];
     $id_servicio = $atts['id_servicio'];
     $tipo_servicio = $atts['tipo_servicio'];
+    $tipo_calendario = $atts['tipo_calendario'];
 }
-
-
 
 try {
     $serviceMarcasCoches = new SoapClient("http://api.menorcalines.com/V3/FerryWebService.asmx?WSDL");
@@ -77,8 +76,8 @@ if (!function_exists('rellenarOptionsModelo')) {
                 return $optionsModelosCoche;
             }
         } catch (\Throwable $th) {
-            var_dump($th);
-            echo "</br>";
+            //var_dump($th);
+            //echo "</br>";
         }
     }
 }
@@ -97,20 +96,32 @@ if ($current_language != false) {
     $idioma = $current_language;
 }
 
+$idIdioma = 1;
 
-$queryTextos = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_textos WHERE idioma = '$idioma'");
+foreach ($idiomas as $idiomaComprove) {
+    if ($idiomaComprove->idioma == $idioma) {
+        $idIdioma = $idiomaComprove->id;
+    }
+}
+
+
+$queryTextos = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_textos WHERE idioma_id = '$idIdioma'");
 $textosTraducidos = $wpdb->get_results($queryTextos, ARRAY_A)[0];
 
 $queryConstantes = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_constantes");
 $constantes = $wpdb->get_results($queryConstantes)[0];
 
+$queryRutas = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_rutas");
+$rutas = $wpdb->get_results($queryRutas);
+
+$queryPuertos = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_puertos");
+$puertos = $wpdb->get_results($queryPuertos);
+
+
 if (!isset($diaactivo)) {
     $diaactivo = date("d-m-Y");
 }
 
-if ($modo === "modo_experiencias") {
-    $constantes->canal_reserva = "experiencias_formentera_lines";
-}
 
 // PARTIR PRIMER DIA ACTIVO
 $diaini = substr($diaactivo, 0, 2);
@@ -127,11 +138,15 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         const idioma = "<?php echo $idioma ?>";
         const urlMotor = "<?php echo $constantes->url_motor ?>";
         const promocion = "<?php echo $constantes->promocion ?>";
-        const tipoFormulario = "<?php echo $constantes->tipo_formulario ?>";
         const primerDiaEs = "<?php echo $primerdia_es; ?>";
         const primerDiEn = "<?php echo $primerdia_en; ?>";
         const dateActually = "<?php echo date("d/m/Y"); ?>";
         const label_pasajeros = "<?php echo $textosTraducidos["label_pasajeros"] ?>";
+        const tipo_calendario = "<?php echo $tipo_calendario; ?>";
+
+        const rutas = <?php echo json_encode($rutas) ?>;
+        const puertos = <?php echo json_encode($puertos) ?>;
+
         const dateGeneral = {
             linkedCalendars: true,
             autoUpdateInput: true,
@@ -143,9 +158,12 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             endDate: primerDiEn
         };
 
+
+        setRutasValueInSelect("origen", "destino", puertos, rutas);
+
         let dateIdioma = paramsByDatepicker(idioma, dateActually);
-        loadDatePicker(dateGeneral, dateFechas, dateIdioma);
-        loadEventListeners(urlMotor, idioma, dateGeneral, dateFechas, dateIdioma);
+        loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+        loadEventListeners(urlMotor, idioma, dateGeneral, dateFechas, dateIdioma, rutas);
         updateDate();
 
         let adultos = 1;
@@ -155,7 +173,106 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         let mascotas = 0;
 
 
-        /* adultos */
+
+        /*Cuando cambiar entre ida o ida y vuelta*/
+        $("#booking-form #idavue").change(function() {
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+        });
+
+        /*Cuando clicka en el boton de aceptar en el dropdown de pasajeros para que se cierre*/
+        $("#booking-form #aceptarocu").click(function() {
+            $("#booking-form #divocupacion").slideUp();
+        });
+
+        $("#booking-form #divocupacion").click(function(e) {
+            e.stopPropagation();
+        });
+
+
+        /*Cuando clicka en el div de los pasajeros para que se despliegue*/
+        $("#booking-form #divpersonas").click(function(e) {
+            $("#booking-form #divocupacion").slideDown();
+            e.stopPropagation();
+        });
+
+        /*Cuando hace focus en el codigo promocional*/
+        $("#booking-form #promo").focus(function() {
+            return false;
+        });
+
+        /*Cuando cambia el origen*/
+        $("#booking-form #origen").change(function() {
+            const valorOrigen = document.querySelector("#origen").value;
+            const puertoId = puertos.find(p => p.valor == valorOrigen).id;
+            const optionsDestino = convertirRutasAObjeto(obtenerRutasCoincidentes(puertoId, rutas), puertos);
+            const selectDestino = document.querySelector("#destino");
+            selectDestino.innerHTML = "";
+        
+
+            Object.entries(optionsDestino).forEach(([key, value]) => {
+                const option = document.createElement("option");
+                option.value = value;
+                option.textContent = key;
+                selectDestino.appendChild(option);
+            });
+
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+        });
+        if (document.querySelector("#booking-form #vehiculo") != undefined) {
+            document
+                .querySelector("#booking-form #vehiculo")
+                .addEventListener("change", function() {
+                    const divMarca = document.querySelector("#booking-form #divmarca");
+                    const marcaInput = document.querySelector("#booking-form #marca");
+                    const divModelo = document.querySelector("#booking-form #divmodelo");
+                    const modeloInput = document.querySelector("#booking-form #modelo");
+
+
+                    const vehiculo = document
+                        .querySelector("#booking-form #vehiculo").value;
+
+                    if (
+                        vehiculo === "turismo" ||
+                        vehiculo === "remolque" ||
+                        vehiculo === "electrico" ||
+                        vehiculo === "hibrido"
+                    ) {
+                        divMarca.classList.remove("disabled");
+                        marcaInput.disabled = false;
+                    } else if (vehiculo === "otros") {
+                        divMarca.classList.add("disabled");
+                        marcaInput.disabled = true;
+                        divModelo.classList.add("disabled");
+                        modeloInput.disabled = true;
+                    } else if (vehiculo === "furgoneta") {
+                        divMarca.classList.remove("disabled");
+                        marcaInput.disabled = false;
+                    } else {
+                        divMarca.classList.add("disabled");
+                        marcaInput.disabled = true;
+                        divModelo.classList.add("disabled");
+                        modeloInput.disabled = true;
+                    }
+
+                    if (
+                        vehiculo === "" ||
+                        vehiculo === "bicicleta" ||
+                        vehiculo === "motocicleta" ||
+                        vehiculo === "ciclomotor"
+                    ) {
+                        marcaInput.value = "";
+                        modeloInput.value = "";
+                    }
+                });
+        }
+
+
+        /*Cuando cambia el destino*/
+        $("#booking-form #destino").change(function() {
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+        });
+
+        /*LISTENERS PASAEROS */
         $('#booking-form #ad_ma').click(function() {
             adultos = $("#booking-form #adultos").val();
             adultos++;
@@ -172,7 +289,6 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
         });
 
-        /* niños */
         $('#booking-form #ni_ma').click(function() {
             ninos = $("#booking-form #ninos").val();
             ninos++;
@@ -189,7 +305,6 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
         });
 
-        /* seniors */
         $('#booking-form #se_ma').click(function() {
             seniors = $("#booking-form #seniors").val();
             seniors++;
@@ -206,7 +321,6 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
         });
 
-        /* bebés */
         $('#booking-form #be_ma').click(function() {
             bebes = $("#booking-form #bebes").val();
             bebes++;
@@ -223,7 +337,6 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
         });
 
-        /* mascotas */
         $('#booking-form #ma_ma').click(function() {
             mascotas = $("#booking-form #mascotas").val();
             mascotas++;
@@ -253,7 +366,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
 
 
-<form id="booking-form" name="booking-form" target="_blank" action="#" method="POST" form-type="<?php echo $tipoFormulario; ?>">
+<form id="booking-form" name="booking-form" target="_blank" action="#" method="POST" form-type="POST">
     <input type="hidden" name="canalreserva" id="canalreserva" value="<?php echo $constantes->canal_reserva; ?>">
     <input type="hidden" name="origin" id="origin" value="<?php echo $constantes->origen; ?>">
 
@@ -264,24 +377,29 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
         <div id="reservas">
             <div>
-                <div id="dividavue" class="caja"><select id="idavue" class="form-select form-select-solid">
-                        <option value="ida"><?= $textosTraducidos["label_solo_ida"] ?></option>
-                        <option value="idavue" selected><?= $textosTraducidos["label_ida_y_vuelta"] ?></option>
-                    </select></div>
+                <?php
+                if ($tipo_calendario != "single") {
+                ?>
+                    <div id="dividavue" class="caja"><select id="idavue" class="form-select form-select-solid">
+                            <option value="ida"><?= $textosTraducidos["label_solo_ida"] ?></option>
+                            <option value="idavue" selected><?= $textosTraducidos["label_ida_y_vuelta"] ?></option>
+                        </select></div>
 
-                <div class="salto"></div>
+                    <div class="salto"></div>
+
+                <?php
+                }
+
+                ?>
 
                 <div id="divorigen" class="caja">
                     <i class="far fa-compass icon"></i>
                     <select name="origen" id="origen" class="form-select">
-                        <option value="ibi">Ibiza</option>
-                        <option value="for">Formentera</option>
                     </select>
                 </div>
                 <div id="divdestino" class="caja">
                     <i class="far fa-compass icon"></i>
                     <select name="destino" id="destino" class="form-select">
-                        <option value="for">Formentera</option>
                     </select>
                 </div>
 

@@ -1735,3 +1735,7 @@ form#booking-form * {
 #site-content{
     overflow: visible;
 }
+
+.daterangepicker{
+    color: rgb(94, 94, 94) !important;
+}

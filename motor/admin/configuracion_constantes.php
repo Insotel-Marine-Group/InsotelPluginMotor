@@ -9,10 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
 
     // Obtener el nuevo valor enviado desde el formulario
     $url_motor = sanitize_text_field($_POST['url_motor']);
-    $tipo_formulario = sanitize_text_field($_POST['tipo_formulario']);
     $promocion = sanitize_text_field($_POST['promocion']);
     $origen = sanitize_text_field($_POST['origen']);
     $canal_reserva = sanitize_text_field($_POST['canal_reserva']);
+
 
     // Actualizar la tabla
     $table_insotel_motor_constantes = $wpdb->prefix . 'insotel_motor_constantes';
@@ -28,10 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
             $table_insotel_motor_constantes,
             array(
                 'url_motor' => $url_motor,
-                'tipo_formulario' => $tipo_formulario,
                 'promocion' => $promocion,
                 'canal_reserva' => $canal_reserva,
-                'origen' => $origen,
+                'origen' => $origen
             )
         );
 
@@ -46,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
             $table_insotel_motor_constantes,
             array(
                 'url_motor' => $url_motor,
-                'tipo_formulario' => $tipo_formulario,
                 'promocion' => $promocion,
                 'canal_reserva' => $canal_reserva,
                 'origen' => $origen,
@@ -83,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     <input type="text" class="form-control" id="url_motor" name="url_motor" value="<?php echo $constantes->url_motor ?>">
                 </div>
                 <div class="col-sm-6">
-                    <label for="tipo_formulario">¿Hay código promocional?</label><br>
+                <label for="promocion">¿Promocion activa?</label><br>
                     <?php
                     if ($constantes->is_promocion) {
                     ?>
@@ -109,10 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 <div class="col-sm-6">
                     <label for="canal_reserva">Canal reserva:</label><br>
                     <input type="text" class="form-control" id="canal_reserva" name="canal_reserva" value="<?php echo $constantes->canal_reserva ?>">
-                </div>
-                <div class="col-sm-6">
-                    <label for="tipo_formulario">Tipo Formulario:</label><br>
-                    <input type="text" class="form-control" id="tipo_formulario" name="tipo_formulario" value="<?php echo $constantes->tipo_formulario ?>">
                 </div>
             </div>
             <button id="boton_guardar" name="update_table" type="submit" class="btn btn-success float-end mt-2">Guardar Cambios</button>

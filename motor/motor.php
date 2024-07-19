@@ -31,6 +31,8 @@ function insotel_motor_menu()
     add_submenu_page(WPP_MOTOR_PATH . '/admin/main.php', 'Configuración textos', 'Configuración textos', 'manage_options', WPP_MOTOR_PATH . '/admin/configuracion_textos.php', null);
     add_submenu_page(WPP_MOTOR_PATH . '/admin/main.php', 'Configuración idiomas', 'Configuración idiomas', 'manage_options', WPP_MOTOR_PATH . '/admin/configuracion_idiomas.php', null);
     add_submenu_page(WPP_MOTOR_PATH . '/admin/main.php', 'Configuración constantes', 'Configuración constantes', 'manage_options', WPP_MOTOR_PATH . '/admin/configuracion_constantes.php', null);
+    add_submenu_page(WPP_MOTOR_PATH . '/admin/main.php', 'Configuración puertos', 'Configuración puertos', 'manage_options', WPP_MOTOR_PATH . '/admin/configuracion_puertos.php', null);
+    add_submenu_page(WPP_MOTOR_PATH . '/admin/main.php', 'Configuración rutas', 'Configuración rutas', 'manage_options', WPP_MOTOR_PATH . '/admin/configuracion_rutas.php', null);
 }
 add_action('admin_menu', 'insotel_motor_menu');
 
@@ -74,21 +76,23 @@ function insotel_motor_shortcode($atts)
 
 
 //Añadir Shortcode
-add_shortcode('insotel_motor_experiencias', 'insotel_motor_experiencias_shortcode');
+add_shortcode('insotel_motor_servicios', 'insotel_motor_servicios_shortcode');
 
-function insotel_motor_experiencias_shortcode($atts)
+function insotel_motor_servicios_shortcode($atts)
 {
     $id_servicio = intval($atts['id_servicio']);
     $tipo_servicio = intval($atts['tipo_servicio']);
+    $tipo_calendario = intval($atts['tipo_calendario']);
 
     $atts = shortcode_atts(
         array(
-            'modo' => "modo_experiencias",
+            'modo' => "modo_servicios",
             'id_servicio' =>  $id_servicio,
             'tipo_servicio' =>  $tipo_servicio,
+            'tipo_calendario' =>  $tipo_calendario,
         ),
         $atts,
-        'insotel_motor_experiencias'
+        'insotel_motor_servicios'
     );
 
     // Encolar los estilos y scripts necesarios
@@ -214,6 +218,8 @@ function wp_learn_create_database_table_motor()
     $Insotel_Motor_bd->create_table_insotel_motor_idiomas($wpdb);
     $Insotel_Motor_bd->create_table_insotel_motor_textos($wpdb);
     $Insotel_Motor_bd->create_table_insotel_motor_constantes($wpdb);
+    $Insotel_Motor_bd->create_table_insotel_motor_puertos($wpdb);
+    $Insotel_Motor_bd->create_table_insotel_motor_rutas($wpdb);
 }
 // Creamos la base da datos
 register_activation_hook(__FILE__, 'wp_learn_create_database_table_motor');
