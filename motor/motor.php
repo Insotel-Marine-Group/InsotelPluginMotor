@@ -81,8 +81,10 @@ add_shortcode('insotel_motor_servicios', 'insotel_motor_servicios_shortcode');
 function insotel_motor_servicios_shortcode($atts)
 {
     $id_servicio = intval($atts['id_servicio']);
-    $tipo_servicio = intval($atts['tipo_servicio']);
-    $tipo_calendario = intval($atts['tipo_calendario']);
+    $tipo_servicio = $atts['tipo_servicio'];
+    $tipo_calendario = $atts['tipo_calendario'];
+    $opciones_ida_vuelta = $atts['opciones_ida_vuelta'];
+    $tipo_pasajero = $atts['tipo_pasajero'];
 
     $atts = shortcode_atts(
         array(
@@ -90,6 +92,8 @@ function insotel_motor_servicios_shortcode($atts)
             'id_servicio' =>  $id_servicio,
             'tipo_servicio' =>  $tipo_servicio,
             'tipo_calendario' =>  $tipo_calendario,
+            'opciones_ida_vuelta' =>  $opciones_ida_vuelta,
+            'tipo_pasajero' =>  $tipo_pasajero
         ),
         $atts,
         'insotel_motor_servicios'
@@ -119,7 +123,7 @@ function insotel_motor_servicios_shortcode($atts)
 
 function registrar_librerias_insotel_motor()
 {
-    
+
     // Registrar main.css
     wp_register_style(
         'insotel_motor_main_css',

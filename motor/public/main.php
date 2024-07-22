@@ -2,11 +2,16 @@
 $id_servicio = "";
 $tipo_servicio = "";
 $tipo_calendario = "";
+$opciones_ida_vuelta = "seleccionable";
+$tipo_pasajero = "todos";
+
 if (isset($atts)) {
     $modo = $atts['modo'];
-    $id_servicio = $atts['id_servicio'];
-    $tipo_servicio = $atts['tipo_servicio'];
-    $tipo_calendario = $atts['tipo_calendario'];
+    $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
+    $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
+    $tipo_calendario = isset($atts['tipo_calendario']) ? $atts['tipo_calendario'] : "";
+    $opciones_ida_vuelta = isset($atts['opciones_ida_vuelta']) ? $atts['opciones_ida_vuelta'] : "seleccionable";
+    $tipo_pasajero = isset($atts['tipo_pasajero']) ? $atts['tipo_pasajero'] : "todos";
 }
 
 try {
@@ -133,7 +138,14 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 ?>
 
 <script>
+    let isCargado = false;
     document.addEventListener("DOMContentLoaded", () => {
+        if (!isCargado) {
+            isCargado = true;
+            console.log("No cargado");
+        } else {
+            console.log("Cargado");
+        }
 
         const idioma = "<?php echo $idioma ?>";
         const urlMotor = "<?php echo $constantes->url_motor ?>";
@@ -146,6 +158,9 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
         const rutas = <?php echo json_encode($rutas) ?>;
         const puertos = <?php echo json_encode($puertos) ?>;
+
+        const opciones_ida_vuelta = "<?php echo $opciones_ida_vuelta ?>";
+        const tipo_pasajero = "<?php echo $tipo_pasajero ?>";
 
         const dateGeneral = {
             linkedCalendars: true,
@@ -163,7 +178,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
         let dateIdioma = paramsByDatepicker(idioma, dateActually);
         loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
-        loadEventListeners(urlMotor, idioma, dateGeneral, dateFechas, dateIdioma, rutas);
+        loadEventListeners(urlMotor, idioma, opciones_ida_vuelta);
         updateDate();
 
         let adultos = 1;
@@ -207,7 +222,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             const optionsDestino = convertirRutasAObjeto(obtenerRutasCoincidentes(puertoId, rutas), puertos);
             const selectDestino = document.querySelector("#destino");
             selectDestino.innerHTML = "";
-        
+
 
             Object.entries(optionsDestino).forEach(([key, value]) => {
                 const option = document.createElement("option");
@@ -218,6 +233,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
             loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
         });
+
         if (document.querySelector("#booking-form #vehiculo") != undefined) {
             document
                 .querySelector("#booking-form #vehiculo")
@@ -272,98 +288,233 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
         });
 
-        /*LISTENERS PASAEROS */
-        $('#booking-form #ad_ma').click(function() {
-            adultos = $("#booking-form #adultos").val();
-            adultos++;
-            if (adultos > 10) adultos = 10;
-            $("#booking-form #adultos").val(adultos);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        /*LISTENERS PASAEJROS */
+        if (document.querySelector('#booking-form #ad_ma') != undefined) {
+            $('#booking-form #ad_ma').click(function() {
+                adultos = $("#booking-form #adultos").val();
+                adultos++;
+                if (adultos > 10) adultos = 10;
+                $("#booking-form #adultos").val(adultos);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #ad_me').click(function() {
-            adultos = $("#booking-form #adultos").val();
-            adultos--;
-            if (adultos < 0) adultos = 0;
-            $("#booking-form #adultos").val(adultos);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #ad_me') != undefined) {
+            $('#booking-form #ad_me').click(function() {
+                adultos = $("#booking-form #adultos").val();
+                adultos--;
+                if (adultos < 0) adultos = 0;
+                $("#booking-form #adultos").val(adultos);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #ni_ma').click(function() {
-            ninos = $("#booking-form #ninos").val();
-            ninos++;
-            if (ninos > 10) ninos = 10;
-            $("#booking-form #ninos").val(ninos);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #ni_ma') != undefined) {
+            document.querySelector('#booking-form #ni_ma').addEventListener("click", () => {
+                ninos = $("#booking-form #ninos").val();
+                console.log(ninos);
+                ninos++;
+                console.log(ninos);
+                if (ninos > 10) ninos = 10;
+                $("#booking-form #ninos").val(ninos);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            })
+        }
 
-        $('#booking-form #ni_me').click(function() {
-            ninos = $("#booking-form #ninos").val();
-            ninos--;
-            if (ninos < 0) ninos = 0;
-            $("#booking-form #ninos").val(ninos);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #ni_me') != undefined) {
+            $('#booking-form #ni_me').click(function() {
+                ninos = $("#booking-form #ninos").val();
+                console.log(ninos);
+                ninos--;
+                console.log(ninos);
+                if (ninos < 0) ninos = 0;
+                $("#booking-form #ninos").val(ninos);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #se_ma').click(function() {
-            seniors = $("#booking-form #seniors").val();
-            seniors++;
-            if (seniors > 10) seniors = 10;
-            $("#booking-form #seniors").val(seniors);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #se_ma') != undefined) {
+            $('#booking-form #se_ma').click(function() {
+                seniors = $("#booking-form #seniors").val();
+                seniors++;
+                if (seniors > 10) seniors = 10;
+                $("#booking-form #seniors").val(seniors);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #se_me').click(function() {
-            seniors = $("#booking-form #seniors").val();
-            seniors--;
-            if (seniors < 0) seniors = 0;
-            $("#booking-form #seniors").val(seniors);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #se_me') != undefined) {
+            $('#booking-form #se_me').click(function() {
+                seniors = $("#booking-form #seniors").val();
+                seniors--;
+                if (seniors < 0) seniors = 0;
+                $("#booking-form #seniors").val(seniors);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #be_ma').click(function() {
-            bebes = $("#booking-form #bebes").val();
-            bebes++;
-            if (bebes > 10) bebes = 10;
-            $("#booking-form #bebes").val(bebes);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #be_ma') != undefined) {
+            $('#booking-form #be_ma').click(function() {
+                bebes = $("#booking-form #bebes").val();
+                bebes++;
+                if (bebes > 10) bebes = 10;
+                $("#booking-form #bebes").val(bebes);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form be_me').click(function() {
-            bebes = $("#booking-form #bebes").val();
-            bebes--;
-            if (bebes < 0) bebes = 0;
-            $("#booking-form #bebes").val(bebes);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form be_me') != undefined) {
+            $('#booking-form be_me').click(function() {
+                bebes = $("#booking-form #bebes").val();
+                bebes--;
+                if (bebes < 0) bebes = 0;
+                $("#booking-form #bebes").val(bebes);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #ma_ma').click(function() {
-            mascotas = $("#booking-form #mascotas").val();
-            mascotas++;
-            if (mascotas > 2) mascotas = 2;
-            $("#booking-form #mascotas").val(mascotas);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #ma_ma') != undefined) {
+            $('#booking-form #ma_ma').click(function() {
+                mascotas = $("#booking-form #mascotas").val();
+                mascotas++;
+                if (mascotas > 2) mascotas = 2;
+                $("#booking-form #mascotas").val(mascotas);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $('#booking-form #ma_me').click(function() {
-            mascotas = $("#booking-form #mascotas").val();
-            mascotas--;
-            if (mascotas < 0) mascotas = 0;
-            $("#booking-form #mascotas").val(mascotas);
-            calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
-        });
+        if (document.querySelector('#booking-form #ma_me') != undefined) {
+            $('#booking-form #ma_me').click(function() {
+                mascotas = $("#booking-form #mascotas").val();
+                mascotas--;
+                if (mascotas < 0) mascotas = 0;
+                $("#booking-form #mascotas").val(mascotas);
+                calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
+            });
+        }
 
-        $("#booking-form #switchFamilia").change(function(e) {
-            if ($("#booking-form #switchFamilia").is(':checked')) {
-                $("#booking-form #divfamilia").slideDown("slow");
-            } else {
-                $("#booking-form #divfamilia").slideUp("slow");
-            }
-        });
+        if (document.querySelector("#booking-form #switchFamilia") != undefined) {
+            $("#booking-form #switchFamilia").change(function(e) {
+                if ($("#booking-form #switchFamilia").is(':checked')) {
+                    $("#booking-form #divfamilia").slideDown("slow");
+                } else {
+                    $("#booking-form #divfamilia").slideUp("slow");
+                }
+            });
+        }
+
+        if (document.querySelector("#booking-form #marca") != undefined) {
+            document
+                .querySelector("#booking-form #marca")
+                .addEventListener("change", function() {
+                    const marcaSelect = document.querySelector("#booking-form #marca");
+                    const divModelo = document.querySelector("#booking-form #divmodelo");
+                    const modeloSelect = document.querySelector("#booking-form #modelo");
+
+                    // Habilita el contenedor y el select de modelo
+                    divModelo.classList.remove("disabled");
+                    modeloSelect.disabled = false;
+
+                    // Limpia el contenido del select de modelo
+                    modeloSelect.innerHTML = "";
+
+                    // Obtén el valor seleccionado en el select de marca
+                    const marca = marcaSelect.value;
+                    // Construye la URL para la solicitud nuevo-test/wordpress-6.2.1-es_ES
+                    const url = `/wp-content/plugins/motor/public/modelos.php?marca=${marca}`;
+
+                    // Realiza una solicitud POST usando fetch
+                    fetch(url, {
+                            method: "POST",
+                        })
+                        .then((response) => response.text()) // Convierte la respuesta a texto
+                        .then((data) => {
+                            // Actualiza el select de modelo con la respuesta y muestra el select
+                            modeloSelect.innerHTML = data;
+                            modeloSelect.style.display = "block";
+                        })
+                        .catch((error) => {
+                            console.error("Error:", error);
+                        });
+                });
+        }
+
+
+        // Selecciona el botón de buscar
+        document
+            .querySelector("#booking-form #botonbuscar")
+            .addEventListener("click", function(ev) {
+                console.log("Has clickado el boton de buscar reserva");
+
+                const fechas = document.querySelector("#booking-form #fecha-viaje").value;
+                if (fechas.includes("-")) {
+                    const fechasArray = fechas.split("-");
+                    const fechaini = fechasArray[0].trim();
+                    const fechafin = fechasArray[1].trim();
+
+                    // Extrae el día, mes y año de las fechas
+                    const diaini = fechaini.substring(0, 2);
+                    const mesini = fechaini.substring(3, 5);
+                    const anoini = fechaini.substring(6, 10);
+                    const diafin = fechafin.substring(0, 2);
+                    const mesfin = fechafin.substring(3, 5);
+                    const anofin = fechafin.substring(6, 10);
+
+                    // Asigna las fechas formateadas a los campos de entrada
+                    document.querySelector(
+                        "#booking-form #fechaini"
+                    ).value = `${diaini}-${mesini}-${anoini}`;
+
+                    if (opciones_ida_vuelta != "ida") {
+                        document.querySelector(
+                            "#booking-form #fechafin"
+                        ).value = `${diafin}-${mesfin}-${anofin}`;
+                    }
+                } else {
+                    const diaini = fechas.substring(0, 2);
+                    const mesini = fechas.substring(3, 5);
+                    const anoini = fechas.substring(6, 10);
+
+                    document.querySelector(
+                        "#booking-form #fechaini"
+                    ).value = `${diaini}-${mesini}-${anoini}`;
+
+                    if (opciones_ida_vuelta != "ida") {
+                        document.querySelector(
+                            "#booking-form #fechafin"
+                        ).value = `${diaini}-${mesini}-${anoini}`;
+                    }
+                }
+
+                // Establece la acción del formulario
+                document.querySelector(
+                    "#booking-form"
+                ).action = `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`;
+
+                // Verifica el estado de los switches y actualiza los valores del formulario
+                if (document.querySelector("#booking-form #switchFamilia") != undefined) {
+                    if (!document.querySelector("#booking-form #switchFamilia").checked) {
+                        document.querySelector("#booking-form #familia").value = "";
+                    }
+                }
+
+                if (document.querySelector("#booking-form #switchViajo") != undefined) {
+                    if (document.querySelector("#booking-form #switchViajo").checked) {
+                        document.querySelector(
+                            "#booking-form"
+                        ).action = `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`;
+                    } else {
+                        document.querySelector("#booking-form #vehiculo").value = "";
+                    }
+                }
+
+                // Envía el formulario
+                if (getTotalPasajeros() > 0) {
+                    document.querySelector("#booking-form").submit();
+                }
+            });
     });
 </script>
-
-
 
 
 <form id="booking-form" name="booking-form" target="_blank" action="#" method="POST" form-type="POST">
@@ -378,7 +529,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         <div id="reservas">
             <div>
                 <?php
-                if ($tipo_calendario != "single") {
+                if ($opciones_ida_vuelta == "seleccionable") {
                 ?>
                     <div id="dividavue" class="caja"><select id="idavue" class="form-select form-select-solid">
                             <option value="ida"><?= $textosTraducidos["label_solo_ida"] ?></option>
@@ -406,7 +557,15 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
                 <div id="divfechas" class="caja"><i class="far fa-calendar-alt icon"></i><input type="text" id="fecha-viaje" class="form-control campo" readonly></div>
                 <input type="hidden" name="fechaini" id="fechaini">
-                <input type="hidden" name="fechafin" id="fechafin">
+
+                <?php
+                if ($opciones_ida_vuelta != "ida") {
+                ?>
+                    <input type="hidden" name="fechafin" id="fechafin">
+
+                <?php
+                }
+                ?>
 
                 <div id="divpersonas" class="caja"><i class="fas fa-male icon"></i><input style="width: 100%;" id="numpasajeros" name="numpasajeros" type="text" class="campo" value="1 <?= $textosTraducidos["label_pasajeros"] ?>" readonly></div>
 
@@ -507,24 +666,31 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
             <div class="salto"></div>
 
-            <div class="pasajero">
-                <div class="texto"><?= $textosTraducidos["label_ninos"] ?><br><span><?= $textosTraducidos["label_edad_ninos"] ?></span></div>
-                <div class="menos" id="ni_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="currentColor">
-                            <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
-                            <path d="M9 15h14a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z"></path>
-                        </g>
-                    </svg></div>
-                <div class="dato"><input type="type" id="ninos" name="ninos" value="0" class="form-control form-control-sm" readonly></div>
-                <div class="mas" id="ni_ma"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="currentColor">
-                            <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
-                            <path d="M16 8a1 1 0 0 1 1 1v6h6a1 1 0 0 1 0 2h-6.001L17 23a1 1 0 0 1-2 0l-.001-6H9a1 1 0 0 1 0-2h6V9a1 1 0 0 1 1-1z"></path>
-                        </g>
-                    </svg></div>
-            </div>
+            <?php
+            if ($tipo_pasajero != "adultos") {
+            ?>
+                <div class="pasajero">
+                    <div class="texto"><?= $textosTraducidos["label_ninos"] ?><br><span><?= $textosTraducidos["label_edad_ninos"] ?></span></div>
+                    <div class="menos" id="ni_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <g fill="currentColor">
+                                <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
+                                <path d="M9 15h14a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z"></path>
+                            </g>
+                        </svg></div>
+                    <div class="dato"><input type="type" id="ninos" name="ninos" value="0" class="form-control form-control-sm" readonly></div>
+                    <div class="mas" id="ni_ma"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <g fill="currentColor">
+                                <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
+                                <path d="M16 8a1 1 0 0 1 1 1v6h6a1 1 0 0 1 0 2h-6.001L17 23a1 1 0 0 1-2 0l-.001-6H9a1 1 0 0 1 0-2h6V9a1 1 0 0 1 1-1z"></path>
+                            </g>
+                        </svg></div>
+                </div>
 
-            <div class="salto"></div>
+                <div class="salto"></div>
+            <?php
+            }
+            ?>
+
 
             <div class="pasajero">
                 <div class="texto"><?= $textosTraducidos["label_seniors"] ?><br><span><?= $textosTraducidos["label_edad_seniors"] ?></span></div>
@@ -545,25 +711,34 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
             <div class="salto"></div>
 
-            <div class="pasajero">
-                <div class="texto"><?= $textosTraducidos["label_bebes"] ?><br><span><?= $textosTraducidos["label_edad_bebes"] ?></span></div>
-                <div class="menos" id="be_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="currentColor">
-                            <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
-                            <path d="M9 15h14a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z"></path>
-                        </g>
-                    </svg></div>
-                <div class="dato"><input type="type" id="bebes" name="bebes" value="0" class="form-control form-control-sm" readonly></div>
-                <div class="mas" id="be_ma"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="currentColor">
-                            <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
-                            <path d="M16 8a1 1 0 0 1 1 1v6h6a1 1 0 0 1 0 2h-6.001L17 23a1 1 0 0 1-2 0l-.001-6H9a1 1 0 0 1 0-2h6V9a1 1 0 0 1 1-1z"></path>
-                        </g>
-                    </svg></div>
-            </div>
+            <?php
+
+            if ($tipo_pasajero != "adulto") {
+            ?>
+                <div class="pasajero">
+                    <div class="texto"><?= $textosTraducidos["label_bebes"] ?><br><span><?= $textosTraducidos["label_edad_bebes"] ?></span></div>
+                    <div class="menos" id="be_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <g fill="currentColor">
+                                <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
+                                <path d="M9 15h14a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z"></path>
+                            </g>
+                        </svg></div>
+                    <div class="dato"><input type="type" id="bebes" name="bebes" value="0" class="form-control form-control-sm" readonly></div>
+                    <div class="mas" id="be_ma"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <g fill="currentColor">
+                                <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
+                                <path d="M16 8a1 1 0 0 1 1 1v6h6a1 1 0 0 1 0 2h-6.001L17 23a1 1 0 0 1-2 0l-.001-6H9a1 1 0 0 1 0-2h6V9a1 1 0 0 1 1-1z"></path>
+                            </g>
+                        </svg></div>
+                </div>
 
 
-            <div class="salto"></div>
+                <div class="salto"></div>
+            <?php
+            }
+
+            ?>
+
 
 
             <div class="pasajero">

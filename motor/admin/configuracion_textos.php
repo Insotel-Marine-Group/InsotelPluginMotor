@@ -183,91 +183,91 @@ function getTextoByIdioma($idIdioma, $textos)
                         <div class="row">
                             <div class="col-sm-6">
                                 <label for="label_solo_ida">Label solo ida:</label><br>
-                                <input type="text" class="form-control" id="label_solo_ida" name="label_solo_ida" value="<?php echo isset($_GET['label_solo_ida']) ? $_GET['label_solo_ida'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_solo_ida" name="label_solo_ida" value="<?php echo isset($_GET['label_solo_ida']) ? $_GET['label_solo_ida'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_ida_y_vuelta">Label ida y vuelta:</label><br>
-                                <input type="text" class="form-control" id="label_ida_y_vuelta" name="label_ida_y_vuelta" value="<?php echo isset($_GET['label_ida_y_vuelta']) ? $_GET['label_ida_y_vuelta'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_ida_y_vuelta" name="label_ida_y_vuelta" value="<?php echo isset($_GET['label_ida_y_vuelta']) ? $_GET['label_ida_y_vuelta'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_trayecto">Label trayecto:</label><br>
-                                <input type="text" class="form-control" id="label_trayecto" name="label_trayecto" value="<?php echo isset($_GET['label_trayecto']) ? $_GET['label_trayecto'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_trayecto" name="label_trayecto" value="<?php echo isset($_GET['label_trayecto']) ? $_GET['label_trayecto'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_fecha_viaje">Label fech viaje:</label><br>
-                                <input type="text" class="form-control" id="label_fecha_viaje" name="label_fecha_viaje" value="<?php echo isset($_GET['label_fecha_viaje']) ? $_GET['label_fecha_viaje'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_fecha_viaje" name="label_fecha_viaje" value="<?php echo isset($_GET['label_fecha_viaje']) ? $_GET['label_fecha_viaje'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_pasajeros">Label pasajeros:</label><br>
-                                <input type="text" class="form-control" id="label_pasajeros" name="label_pasajeros" value="<?php echo isset($_GET['label_pasajeros']) ? $_GET['label_pasajeros'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_pasajeros" name="label_pasajeros" value="<?php echo isset($_GET['label_pasajeros']) ? $_GET['label_pasajeros'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_codigo_promocion">Label codigo promocion:</label><br>
-                                <input type="text" class="form-control" id="label_codigo_promocion" name="label_codigo_promocion" value="<?php echo isset($_GET['label_codigo_promocion']) ? $_GET['label_codigo_promocion'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_codigo_promocion" name="label_codigo_promocion" value="<?php echo isset($_GET['label_codigo_promocion']) ? $_GET['label_codigo_promocion'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_adultos">Label adultos:</label><br>
-                                <input type="text" class="form-control" id="label_adultos" name="label_adultos" value="<?php echo isset($_GET['label_adultos']) ? $_GET['label_adultos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_adultos" name="label_adultos" value="<?php echo isset($_GET['label_adultos']) ? $_GET['label_adultos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_ninos">Label ninos:</label><br>
-                                <input type="text" class="form-control" id="label_ninos" name="label_ninos" value="<?php echo isset($_GET['label_ninos']) ? $_GET['label_ninos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_ninos" name="label_ninos" value="<?php echo isset($_GET['label_ninos']) ? $_GET['label_ninos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_seniors">Label seniors:</label><br>
-                                <input type="text" class="form-control" id="label_seniors" name="label_seniors" value="<?php echo isset($_GET['label_seniors']) ? $_GET['label_seniors'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_seniors" name="label_seniors" value="<?php echo isset($_GET['label_seniors']) ? $_GET['label_seniors'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_bebes">Label bebes:</label><br>
-                                <input type="text" class="form-control" id="label_bebes" name="label_bebes" value="<?php echo isset($_GET['label_bebes']) ? $_GET['label_bebes'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_bebes" name="label_bebes" value="<?php echo isset($_GET['label_bebes']) ? $_GET['label_bebes'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_descuentos">Label descuentos:</label><br>
-                                <input type="text" class="form-control" id="label_descuentos" name="label_descuentos" value="<?php echo isset($_GET['label_descuentos']) ? $_GET['label_descuentos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_descuentos" name="label_descuentos" value="<?php echo isset($_GET['label_descuentos']) ? $_GET['label_descuentos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_sin_descuentos">Label sin descuentos:</label><br>
-                                <input type="text" class="form-control" id="label_sin_descuentos" name="label_sin_descuentos" value="<?php echo isset($_GET['label_sin_descuentos']) ? $_GET['label_sin_descuentos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_sin_descuentos" name="label_sin_descuentos" value="<?php echo isset($_GET['label_sin_descuentos']) ? $_GET['label_sin_descuentos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_fn_general">Label fn general:</label><br>
-                                <input type="text" class="form-control" id="label_fn_general" name="label_fn_general" value="<?php echo isset($_GET['label_fn_general']) ? $_GET['label_fn_general'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_fn_general" name="label_fn_general" value="<?php echo isset($_GET['label_fn_general']) ? $_GET['label_fn_general'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_fn_especial">Label fn especial:</label><br>
-                                <input type="text" class="form-control" id="label_fn_especial" name="label_fn_especial" value="<?php echo isset($_GET['label_fn_especial']) ? $_GET['label_fn_especial'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_fn_especial" name="label_fn_especial" value="<?php echo isset($_GET['label_fn_especial']) ? $_GET['label_fn_especial'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_anos">Label anos:</label><br>
-                                <input type="text" class="form-control" id="label_anos" name="label_anos" value="<?php echo isset($_GET['label_anos']) ? $_GET['label_anos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_anos" name="label_anos" value="<?php echo isset($_GET['label_anos']) ? $_GET['label_anos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_reservar">Label reservar:</label><br>
-                                <input type="text" class="form-control" id="label_reservar" name="label_reservar" value="<?php echo isset($_GET['label_reservar']) ? $_GET['label_reservar'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_reservar" name="label_reservar" value="<?php echo isset($_GET['label_reservar']) ? $_GET['label_reservar'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_adultos">Label edad adultos:</label><br>
-                                <input type="text" class="form-control" id="label_edad_adultos" name="label_edad_adultos" value="<?php echo isset($_GET['label_edad_adultos']) ? $_GET['label_edad_adultos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_edad_adultos" name="label_edad_adultos" value="<?php echo isset($_GET['label_edad_adultos']) ? $_GET['label_edad_adultos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_ninos">Label edad ninos:</label><br>
-                                <input type="text" class="form-control" id="label_edad_ninos" name="label_edad_ninos" value="<?php echo isset($_GET['label_edad_ninos']) ? $_GET['label_edad_ninos'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_edad_ninos" name="label_edad_ninos" value="<?php echo isset($_GET['label_edad_ninos']) ? $_GET['label_edad_ninos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_seniors">Label edad seniors:</label><br>
-                                <input type="text" class="form-control" id="label_edad_seniors" name="label_edad_seniors" value="<?php echo isset($_GET['label_edad_seniors']) ? $_GET['label_edad_seniors'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_edad_seniors" name="label_edad_seniors" value="<?php echo isset($_GET['label_edad_seniors']) ? $_GET['label_edad_seniors'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_bebes">Label edad bebes:</label><br>
-                                <input type="text" class="form-control" id="label_edad_bebes" name="label_edad_bebes" value="<?php echo isset($_GET['label_edad_bebes']) ? $_GET['label_edad_bebes'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_edad_bebes" name="label_edad_bebes" value="<?php echo isset($_GET['label_edad_bebes']) ? $_GET['label_edad_bebes'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_mascotas">Label mascotas:</label><br>
-                                <input type="text" class="form-control" id="label_mascotas" name="label_mascotas" value="<?php echo isset($_GET['label_mascotas']) ? $_GET['label_mascotas'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_mascotas" name="label_mascotas" value="<?php echo isset($_GET['label_mascotas']) ? $_GET['label_mascotas'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_anadir_vehiculo">Label añadir vehiculo:</label><br>
-                                <input type="text" class="form-control" id="label_anadir_vehiculo" name="label_anadir_vehiculo" value="<?php echo isset($_GET['label_anadir_vehiculo']) ? $_GET['label_anadir_vehiculo'] : ''; ?>">
+                                <input type="text" class="form-control" id="label_anadir_vehiculo" name="label_anadir_vehiculo" value="<?php echo isset($_GET['label_anadir_vehiculo']) ? $_GET['label_anadir_vehiculo'] : ''; ?>" required>
                             </div>
                         </div>
 

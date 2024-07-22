@@ -22,6 +22,15 @@ const convertirRutasAObjeto = (rutas, puertos) => {
   }, {});
 };
 
+const getTotalPasajeros = () => {
+  return (
+    parseInt($("#booking-form #adultos").val()) +
+    parseInt($("#booking-form #ninos").val()) +
+    parseInt($("#booking-form #seniors").val()) +
+    parseInt($("#booking-form #bebes").val())
+  );
+};
+
 function setRutasValueInSelect(idOrigen, idDestino, puertos, rutas) {
   const optionsOrigen = convertirPuertosAObjeto(puertos);
   const selectOrigen = document.querySelector(`#${idOrigen}`);
@@ -161,58 +170,8 @@ function loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario) {
 }
 
 /*DENTO DE ESTA FUNCIÓN ESTAN EL SUBMIT DEL FORMULARIO */
-function loadEventListeners(urlMotor, idioma) {
-  /*Cuando cambia la marca*/
-  // $("#booking-form #marca").change(function () {
-  //   $("#booking-form #divmodelo").removeClass("disabled");
-  //   $("#booking-form #modelo").attr("disabled", false);
-
-  //   $("#booking-form #modelo").empty();
-
-  //   let marca = $("#booking-form #marca").val();
-  //   $.ajax({
-  //     type: "POST",
-  //     url: "/wp-content/plugins/motor/public/modelos.php?marca=" + marca,
-  //     success: function (response) {
-  //       $("#booking-form #modelo").html(response).fadeIn();
-  //     },
-  //   });
-  // });
-  if (document.querySelector("#booking-form #marca") != undefined) {
-    document
-      .querySelector("#booking-form #marca")
-      .addEventListener("change", function () {
-        const marcaSelect = document.querySelector("#booking-form #marca");
-        const divModelo = document.querySelector("#booking-form #divmodelo");
-        const modeloSelect = document.querySelector("#booking-form #modelo");
-
-        // Habilita el contenedor y el select de modelo
-        divModelo.classList.remove("disabled");
-        modeloSelect.disabled = false;
-
-        // Limpia el contenido del select de modelo
-        modeloSelect.innerHTML = "";
-
-        // Obtén el valor seleccionado en el select de marca
-        const marca = marcaSelect.value;
-        // Construye la URL para la solicitud nuevo-test/wordpress-6.2.1-es_ES
-        const url = `/wp-content/plugins/motor/public/modelos.php?marca=${marca}`;
-
-        // Realiza una solicitud POST usando fetch
-        fetch(url, {
-          method: "POST",
-        })
-          .then((response) => response.text()) // Convierte la respuesta a texto
-          .then((data) => {
-            // Actualiza el select de modelo con la respuesta y muestra el select
-            modeloSelect.innerHTML = data;
-            modeloSelect.style.display = "block";
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      });
-  }
+function loadEventListeners(urlMotor, idioma, opciones_ida_vuelta) {
+ 
 
   /*Cuando clicka el switch para que se vean las opciones del vehiculo*/
   $("#booking-form #switchViajo").change(function (e) {
@@ -271,75 +230,7 @@ function loadEventListeners(urlMotor, idioma) {
     }
   });
 
-  // Selecciona el botón de buscar
-  document
-    .querySelector("#booking-form #botonbuscar")
-    .addEventListener("click", function (ev) {
-      // Imprime un mensaje en la consola
-      console.log("Has clickado el boton de buscar reserva");
 
-      // Obtén el valor del campo de fecha
-      const fechas = document.querySelector("#booking-form #fecha-viaje").value;
-      console.log(fechas);
-      if (fechas.includes("-")) {
-        const fechasArray = fechas.split("-");
-        const fechaini = fechasArray[0].trim();
-        const fechafin = fechasArray[1].trim();
-
-        // Extrae el día, mes y año de las fechas
-        const diaini = fechaini.substring(0, 2);
-        const mesini = fechaini.substring(3, 5);
-        const anoini = fechaini.substring(6, 10);
-        const diafin = fechafin.substring(0, 2);
-        const mesfin = fechafin.substring(3, 5);
-        const anofin = fechafin.substring(6, 10);
-
-        // Asigna las fechas formateadas a los campos de entrada
-        document.querySelector(
-          "#booking-form #fechaini"
-        ).value = `${diaini}-${mesini}-${anoini}`;
-        document.querySelector(
-          "#booking-form #fechafin"
-        ).value = `${diafin}-${mesfin}-${anofin}`;
-      } else {
-        const diaini = fechas.substring(0, 2);
-        const mesini = fechas.substring(3, 5);
-        const anoini = fechas.substring(6, 10);
-
-        document.querySelector(
-          "#booking-form #fechaini"
-        ).value = `${diaini}-${mesini}-${anoini}`;
-
-        document.querySelector(
-          "#booking-form #fechafin"
-        ).value = `${diaini}-${mesini}-${anoini}`;
-      }
-
-      // Establece la acción del formulario
-      document.querySelector(
-        "#booking-form"
-      ).action = `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`;
-
-      // Verifica el estado de los switches y actualiza los valores del formulario
-      if (document.querySelector("#booking-form #switchFamilia") != undefined) {
-        if (!document.querySelector("#booking-form #switchFamilia").checked) {
-          document.querySelector("#booking-form #familia").value = "";
-        }
-      }
-
-      if (document.querySelector("#booking-form #switchViajo") != undefined) {
-        if (document.querySelector("#booking-form #switchViajo").checked) {
-          document.querySelector(
-            "#booking-form"
-          ).action = `${urlMotor}/${idioma}/Home/IndexDesdePuntoCom`;
-        } else {
-          document.querySelector("#booking-form #vehiculo").value = "";
-        }
-      }
-
-      // Envía el formulario
-      document.querySelector("#booking-form").submit();
-    });
 }
 
 function updateDate() {

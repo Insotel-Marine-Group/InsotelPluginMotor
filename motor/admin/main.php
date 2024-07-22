@@ -19,7 +19,7 @@
                     <div class="col">
                         <div class="w-100 border-1">PARAMETROS DE SHORTCODES</div>
                         <div class="w-100 border-1">no tiene parametros</div>
-                        <div class="w-100 border-1">[id_servicio="1006" tipo_servicio="EXPERIENCIAS" tipo_calendario="single"]</div>
+                        <div class="w-100 border-1">[id_servicio="1006" tipo_servicio="EXPERIENCIAS" tipo_calendario="single" opciones_ida_vuelta="seleccionable"]</div>
                     </div>
                 </div>
             </div>

@@ -91,7 +91,7 @@ function getNamePuertoById($id_puerto, $puertos)
                         <div class="row">
                             <div class="col-12 mb-3">
                                 <label for="nombre_ruta">Nombre ruta:</label><br>
-                                <input type="text" class="form-control" id="nombre_ruta" name="nombre_ruta" value="<?php echo isset($_GET['nombre_ruta']) ? $_GET['nombre_ruta'] : ''; ?>">
+                                <input type="text" class="form-control" id="nombre_ruta" name="nombre_ruta" value="<?php echo isset($_GET['nombre_ruta']) ? $_GET['nombre_ruta'] : ''; ?>" required>
                             </div>
                             <div class="col-6 mb-3">
                                 <label for="nombre_ruta">Puerto Origen:</label><br>
