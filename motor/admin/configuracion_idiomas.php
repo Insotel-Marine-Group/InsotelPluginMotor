@@ -1,17 +1,17 @@
 <?php
 global $wpdb;
 $message = '';
-
-// Obtener el nombre de la página actual para construir URLs correctas
+$messageClass = '';
 $page_url = admin_url('admin.php?page=motor/admin/configuracion_idiomas.php');
+$table_idiomas = $wpdb->prefix . 'insotel_motor_idiomas';
+$table_textos = $wpdb->prefix . 'insotel_motor_textos';
 
 // Manejar la solicitud POST para agregar o actualizar un idioma
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $idioma = sanitize_text_field($_POST['idioma']);
-    $idioma_id = isset($_POST['idioma_id']) ? intval($_POST['idioma_id']) : 0;
+    $idioma_id = $_POST['idioma_id'];
 
     // Verificar si el idioma ya existe
-    $table_idiomas = $wpdb->prefix . 'insotel_motor_idiomas';
     $existing_idioma = $wpdb->get_var($wpdb->prepare(
         "SELECT idioma FROM $table_idiomas WHERE idioma = %s",
         $idioma
@@ -26,30 +26,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 array('id' => $idioma_id)
             );
             $message = $result !== false ? 'Idioma actualizado correctamente.' : 'Hubo un error al actualizar el idioma.';
+            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
         } else {
             $result = $wpdb->insert(
                 $table_idiomas,
                 array('idioma' => $idioma)
             );
             $message = $result !== false ? 'Idioma insertado correctamente.' : 'Hubo un error al insertar el idioma.';
+            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
         }
     } else {
         $message = 'El idioma ya existe.';
+        $messageClass = 'alert-warning';
     }
 }
 
 // Manejar la solicitud GET para eliminar un idioma
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
     $idioma_id = intval($_GET['id']);
-
-    // Eliminar los textos asociados con este idioma
-    $table_textos = $wpdb->prefix . 'insotel_motor_textos';
     $wpdb->delete($table_textos, array('idioma_id' => $idioma_id));
 
     // Eliminar el idioma
-    $table_idiomas = $wpdb->prefix . 'insotel_motor_idiomas';
     $result = $wpdb->delete($table_idiomas, array('id' => $idioma_id));
     $message = $result !== false ? 'Idioma y textos asociados eliminados correctamente.' : 'Hubo un error al eliminar el idioma.';
+    $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+    $_GET['id'] = null;
 }
 
 // Obtener la lista de idiomas
@@ -64,7 +65,7 @@ $idiomas = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}insotel_motor_idioma
 <body>
     <div class="container mt-5">
         <?php if (!empty($message)) : ?>
-            <div id="update-result" class="alert alert-info"><?php echo $message; ?></div>
+            <div id="update-result" class="alert <?php echo $messageClass; ?>"><?php echo $message; ?></div>
         <?php endif; ?>
 
         <h1 class="mb-4">CONFIGURACIÓN DE LOS IDIOMAS DEL PLUGIN</h1>
@@ -82,9 +83,14 @@ $idiomas = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}insotel_motor_idioma
                             <input type="text" class="form-control" id="idioma" name="idioma" value="<?php echo isset($_GET['idioma']) ? sanitize_text_field($_GET['idioma']) : ''; ?>" required>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
+                            <?php
+                            if (isset($_GET['id'])) {
+                            ?>
+                                <a href="<?php echo esc_url($page_url); ?>" class="btn btn-primary mt-3">Volver a la creación</a>
+                            <?php
+                            }
+                            ?>
                             <button id="boton_guardar" name="update_table" type="submit" class="btn btn-success mt-3">Guardar Cambios</button>
-                            <?php $disabled = isset($_GET['id']) ? "" : "disabled" ?>
-                            <button id="boton_guardar" name="reset_table" type="submit" class="btn btn-primary mt-3" <?php echo $disabled; ?>>Volver a la creación</button>
                         </div>
                     </form>
                 </div>

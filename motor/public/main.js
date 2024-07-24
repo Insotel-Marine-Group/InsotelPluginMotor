@@ -47,6 +47,10 @@ function setRutasValueInSelect(idOrigen, idDestino, puertos, rutas) {
     obtenerRutasCoincidentes(puertos[0].id, rutas),
     puertos
   );
+
+  console.log("Rutas:", rutas);
+  console.log("Options destino:", optionsDestino);
+
   const selectDestino = document.querySelector(`#${idDestino}`);
   selectDestino.innerHTML = "";
 
@@ -134,25 +138,37 @@ function idavuelta() {
   }
 }
 
-function loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario) {
+function loadDatePicker(
+  dateGeneral,
+  dateFechas,
+  dateIdioma,
+  solo_una_fecha,
+  tipo_viaje
+) {
   var combinedConfig;
 
-  if (tipo_calendario != "") {
-    let singleDatePicker = false;
-    if (tipo_calendario === "single") singleDatePicker = true;
-
-    var combinedConfig = $.extend(
+  if (solo_una_fecha) {
+    combinedConfig = $.extend(
       {
-        singleDatePicker: singleDatePicker,
+        singleDatePicker: true,
+      },
+      dateGeneral,
+      dateFechas,
+      dateIdioma
+    );
+  } else if (tipo_viaje === "seleccionable") {
+    combinedConfig = $.extend(
+      {
+        singleDatePicker: idavuelta(),
       },
       dateGeneral,
       dateFechas,
       dateIdioma
     );
   } else {
-    var combinedConfig = $.extend(
+    combinedConfig = $.extend(
       {
-        singleDatePicker: idavuelta(),
+        singleDatePicker: false,
       },
       dateGeneral,
       dateFechas,
@@ -167,70 +183,6 @@ function loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario) {
       // callback function
     }
   );
-}
-
-/*DENTO DE ESTA FUNCIÓN ESTAN EL SUBMIT DEL FORMULARIO */
-function loadEventListeners(urlMotor, idioma, opciones_ida_vuelta) {
- 
-
-  /*Cuando clicka el switch para que se vean las opciones del vehiculo*/
-  $("#booking-form #switchViajo").change(function (e) {
-    vehicini = "20220319";
-    vehicfin = "20220930";
-
-    $("#booking-form #divmarca").removeClass("disabled");
-    $("#booking-form #marca").attr("disabled", false);
-
-    if (!$("#booking-form #switchViajo").is(":checked")) {
-      $(this).val("0");
-    } else {
-      $(this).val("1");
-    }
-
-    updateDate();
-
-    ori = $("#booking-form #origen").val();
-    des = $("#booking-form #destino").val();
-    fechaini = $("#booking-form #fechaini").val();
-    fechafin = $("#booking-form #fechafin").val();
-
-    if (idioma == "en") {
-      fechaini =
-        fechaini.substr(6, 4) + fechaini.substr(0, 2) + fechaini.substr(3, 2);
-      fechafin =
-        fechafin.substr(6, 4) + fechafin.substr(0, 2) + fechafin.substr(3, 2);
-    } else {
-      fechaini =
-        fechaini.substr(6, 4) + fechaini.substr(3, 2) + fechaini.substr(0, 2);
-      fechafin =
-        fechafin.substr(6, 4) + fechafin.substr(3, 2) + fechafin.substr(0, 2);
-    }
-
-    idavue = $("#booking-form #idavue").val();
-
-    if (idavue == "ida") {
-      if (fechaini >= vehicini && fechaini <= vehicfin) permisovehi = 1;
-      else permisovehi = 0;
-    } else {
-      if (
-        $("#booking-form #origen").val() == "ibi" ||
-        $("#booking-form #origen").val() == "for"
-      ) {
-        if (fechaini >= vehicini && fechafin <= vehicfin) permisovehi = 1;
-        else permisovehi = 0;
-      } else {
-        permisovehi = 1;
-      }
-    }
-
-    if ($("#booking-form #switchViajo").is(":checked")) {
-      $("#booking-form #capaViajo").slideDown("slow");
-    } else {
-      $("#booking-form #capaViajo").slideUp("slow");
-    }
-  });
-
-
 }
 
 function updateDate() {

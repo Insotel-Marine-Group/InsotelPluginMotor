@@ -8,13 +8,17 @@ class Insotel_Motor_Bd
         $charset_collate = $wpdb->get_charset_collate();
         $nameTable = $wpdb->prefix . 'insotel_motor_idiomas';
 
-        $sql = "CREATE TABLE $nameTable (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        idioma varchar(5) NOT NULL,
-        PRIMARY KEY  (id)
-        ) $charset_collate;";
+        if ($wpdb->get_var("SHOW TABLES LIKE '$nameTable'") != $nameTable) {
+            $sql = "CREATE TABLE $nameTable (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                idioma varchar(5) NOT NULL,
+                PRIMARY KEY  (id),
+                UNIQUE (idioma)
+                ) $charset_collate;";
 
-        dbDelta($sql);
+            dbDelta($sql);
+        }
+
 
         // Verificar si el idioma ya existe
         $count = $wpdb->get_var($wpdb->prepare(
@@ -58,45 +62,48 @@ class Insotel_Motor_Bd
         $nameTable = $wpdb->prefix . 'insotel_motor_textos';
         $idiomasTable = $wpdb->prefix . 'insotel_motor_idiomas';
 
-        $sql = "CREATE TABLE $nameTable (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        idioma_id mediumint(9) NOT NULL,
-        label_solo_ida varchar(100) NOT NULL,
-        label_ida_y_vuelta varchar(100) NOT NULL,
-        label_trayecto varchar(100) NOT NULL,
-        label_fecha_viaje varchar(100) NOT NULL,
-        label_pasajeros varchar(100) NOT NULL,
-        label_codigo_promocion varchar(100) NOT NULL,
-        label_adultos varchar(100) NOT NULL,
-        label_ninos varchar(100) NOT NULL,
-        label_seniors varchar(100) NOT NULL,
-        label_bebes varchar(100) NOT NULL,
-        label_descuentos varchar(100) NOT NULL,
-        label_sin_descuentos varchar(100) NOT NULL,
-        label_fn_general varchar(200) NOT NULL,
-        label_fn_especial varchar(200) NOT NULL,
-        label_anos varchar(100) NOT NULL,
-        label_reservar varchar(100) NOT NULL,
-        label_edad_adultos varchar(100) NOT NULL,
-        label_edad_ninos varchar(100) NOT NULL,
-        label_edad_seniors varchar(100) NOT NULL,
-        label_edad_bebes varchar(100) NOT NULL, 
-        label_mascotas varchar(200) NOT NULL,
-        label_anadir_vehiculo varchar(200) NOT NULL,
-        ruta_ida varchar(200) NOT NULL,
-        ruta_vuelta varchar(200) NOT NULL,
-        PRIMARY KEY  (id),
-        FOREIGN KEY (idioma_id) REFERENCES $idiomasTable(id) ON DELETE CASCADE
-        ) $charset_collate;";
+        if ($wpdb->get_var("SHOW TABLES LIKE '$nameTable'") != $nameTable) {
+            $sql = "CREATE TABLE $nameTable (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                idioma_id mediumint(9) NOT NULL,
+                label_solo_ida varchar(100) NOT NULL,
+                label_ida_y_vuelta varchar(100) NOT NULL,
+                label_trayecto varchar(100) NOT NULL,
+                label_fecha_viaje varchar(100) NOT NULL,
+                label_pasajeros varchar(100) NOT NULL,
+                label_codigo_promocion varchar(100) NOT NULL,
+                label_adultos varchar(100) NOT NULL,
+                label_ninos varchar(100) NOT NULL,
+                label_seniors varchar(100) NOT NULL,
+                label_bebes varchar(100) NOT NULL,
+                label_descuentos varchar(100) NOT NULL,
+                label_sin_descuentos varchar(100) NOT NULL,
+                label_fn_general varchar(200) NOT NULL,
+                label_fn_especial varchar(200) NOT NULL,
+                label_anos varchar(100) NOT NULL,
+                label_reservar varchar(100) NOT NULL,
+                label_edad_adultos varchar(100) NOT NULL,
+                label_edad_ninos varchar(100) NOT NULL,
+                label_edad_seniors varchar(100) NOT NULL,
+                label_edad_bebes varchar(100) NOT NULL, 
+                label_mascotas varchar(200) NOT NULL,
+                label_anadir_vehiculo varchar(200) NOT NULL,
+                ruta_ida varchar(200) NOT NULL,
+                ruta_vuelta varchar(200) NOT NULL,
+                PRIMARY KEY  (id),
+                FOREIGN KEY (idioma_id) REFERENCES $idiomasTable(id) ON DELETE CASCADE
+                ) $charset_collate;";
 
-        dbDelta($sql);
+            dbDelta($sql);
+        }
+
 
         // Verificar si el idioma ya existe
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count === 0 || $count === "0") {
+        if ($count == 0) {
             $wpdb->insert(
                 $nameTable,
                 array(
@@ -228,15 +235,17 @@ class Insotel_Motor_Bd
         $charset_collate = $wpdb->get_charset_collate();
         $nameTable = $wpdb->prefix . 'insotel_motor_constantes';
 
-        $sql = "CREATE TABLE $nameTable (id mediumint(9) NOT NULL AUTO_INCREMENT,
-        promocion varchar(50) NOT NULL,
-        is_promocion boolean NOT NULL,
-        origen varchar(50) NOT NULL,
-        canal_reserva varchar(50) NOT NULL,
-        url_motor varchar(300) NOT NULL,
-        PRIMARY KEY  (id)) $charset_collate;";
+        if ($wpdb->get_var("SHOW TABLES LIKE '$nameTable'") != $nameTable) {
+            $sql = "CREATE TABLE $nameTable (id mediumint(9) NOT NULL AUTO_INCREMENT,
+            promocion varchar(50) NOT NULL,
+            is_promocion boolean NOT NULL,
+            origen varchar(50) NOT NULL,
+            canal_reserva varchar(50) NOT NULL,
+            url_motor varchar(300) NOT NULL,
+            PRIMARY KEY  (id)) $charset_collate;";
+            dbDelta($sql);
+        }
 
-        dbDelta($sql);
 
 
         // Verificar si el idioma ya existe
@@ -245,7 +254,7 @@ class Insotel_Motor_Bd
         ));
 
 
-        if ($count === 0 || $count === "0") {
+        if ($count == 0) {
             $wpdb->insert(
                 $nameTable,
                 array(
@@ -265,40 +274,50 @@ class Insotel_Motor_Bd
         $charset_collate = $wpdb->get_charset_collate();
         $nameTable = $wpdb->prefix . 'insotel_motor_puertos';
 
-        $sql = "CREATE TABLE $nameTable (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        nombre varchar(50) NOT NULL,
-        valor varchar(20) NOT NULL,
-        PRIMARY KEY  (id)
-        ) $charset_collate;";
+        if ($wpdb->get_var("SHOW TABLES LIKE '$nameTable'") != $nameTable) {
+            $sql = "CREATE TABLE $nameTable (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                nombre varchar(50) NOT NULL,
+                valor varchar(20) NOT NULL,
+                orden int(11) NOT NULL,
+                PRIMARY KEY  (id),
+                UNIQUE (nombre),
+                UNIQUE (valor),
+                UNIQUE (orden)
+                ) $charset_collate;";
 
-        dbDelta($sql);
+            dbDelta($sql);
+        }
+
 
         // Verificar si el idioma ya existe
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count === 0 || $count === "0") {
+        if ($count == 0) {
             $wpdb->insert(
                 $nameTable,
                 array(
                     'nombre' => 'Mallorca',
-                    'valor' => '1'
+                    'valor' => 'mall',
+                    'orden' => '1'
                 )
             );
             $wpdb->insert(
                 $nameTable,
                 array(
                     'nombre' => 'Menorca',
-                    'valor' => '2'
+                    'valor' => 'men',
+                    'orden' => '2'
                 )
             );
             $wpdb->insert(
                 $nameTable,
                 array(
                     'nombre' => 'Barcelona',
-                    'valor' => '3'
+                    'valor' => 'bar',
+                    'orden' => '3'
                 )
             );
         }
@@ -311,24 +330,27 @@ class Insotel_Motor_Bd
         $nameTable = $wpdb->prefix . 'insotel_motor_rutas';
         $puertosTable = $wpdb->prefix . 'insotel_motor_puertos';
 
-        $sql = "CREATE TABLE $nameTable (
-        id mediumint(9) NOT NULL AUTO_INCREMENT,
-        nombre_ruta varchar(50) NOT NULL,
-        puerto_ruta_ida mediumint(9) NOT NULL,
-        puerto_ruta_vuelta mediumint(9) NOT NULL,
-        PRIMARY KEY  (id),
-        FOREIGN KEY (puerto_ruta_ida) REFERENCES $puertosTable(id) ON DELETE CASCADE,
-        FOREIGN KEY (puerto_ruta_vuelta) REFERENCES $puertosTable(id) ON DELETE CASCADE
-        ) $charset_collate;";
+        if ($wpdb->get_var("SHOW TABLES LIKE '$nameTable'") != $nameTable) {
+            $sql = "CREATE TABLE $nameTable (
+                id mediumint(9) NOT NULL AUTO_INCREMENT,
+                nombre_ruta varchar(50) NOT NULL,
+                puerto_ruta_ida mediumint(9) NOT NULL,
+                puerto_ruta_vuelta mediumint(9) NOT NULL,
+                PRIMARY KEY  (id),
+                UNIQUE (nombre_ruta),
+                FOREIGN KEY (puerto_ruta_ida) REFERENCES $puertosTable(id) ON DELETE CASCADE,
+                FOREIGN KEY (puerto_ruta_vuelta) REFERENCES $puertosTable(id) ON DELETE CASCADE
+                ) $charset_collate;";
 
-        dbDelta($sql);
+            dbDelta($sql);
+        }
 
         // Verificar si el idioma ya existe
         $count = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count === 0 || $count === "0") {
+        if ($count == 0) {
             $wpdb->insert(
                 $nameTable,
                 array(

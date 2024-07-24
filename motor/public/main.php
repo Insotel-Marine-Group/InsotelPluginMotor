@@ -1,105 +1,39 @@
 <?php
-$id_servicio = "";
+
+$id_servicio = "0";
 $tipo_servicio = "";
-$tipo_calendario = "";
-$opciones_ida_vuelta = "seleccionable";
-$tipo_pasajero = "todos";
+$mostrar_vehiculo = true;
+$solo_una_fecha = false;
+$tipo_viaje = "seleccionable";
+$solo_adultos = false;
 
 if (isset($atts)) {
-    $modo = $atts['modo'];
     $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
     $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
-    $tipo_calendario = isset($atts['tipo_calendario']) ? $atts['tipo_calendario'] : "";
-    $opciones_ida_vuelta = isset($atts['opciones_ida_vuelta']) ? $atts['opciones_ida_vuelta'] : "seleccionable";
-    $tipo_pasajero = isset($atts['tipo_pasajero']) ? $atts['tipo_pasajero'] : "todos";
-}
+    $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : false;
+    $solo_una_fecha = isset($atts['solo_una_fecha']) ? filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN) : false;
 
-try {
-    $serviceMarcasCoches = new SoapClient("http://api.menorcalines.com/V3/FerryWebService.asmx?WSDL");
-    $respServiceCoches = $serviceMarcasCoches->GetVehicleBrands();
-    $numVehiculos = count($respServiceCoches->GetVehicleBrandsResult->MarcaVehiculo);
-    $optionsMarcasCoche = "";
-    for ($a = 0; $a < $numVehiculos; $a++) {
-        $optionsMarcasCoche .= "<option value=\"" . $respServiceCoches->GetVehicleBrandsResult->MarcaVehiculo[$a]->Code . "\">" . $respServiceCoches->GetVehicleBrandsResult->MarcaVehiculo[$a]->Name . "</option>";
-    }
-} catch (Exception $e) {
-    trigger_error($e->getMessage(), E_USER_WARNING);
-}
+    $tipo_viaje = isset($atts['tipo_viaje']) ? $atts['tipo_viaje'] : "seleccionable";
+    $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
 
-if (!function_exists('check_language_in_url')) {
-    function check_language_in_url($idiomas)
-    {
-        // Convertir la URL actual a mayúsculas
-        $current_url = strtoupper($_SERVER['REQUEST_URI']);
-
-        // Dividir la URL en segmentos por las barras "/"
-        $url_segments = explode('/', $current_url);
-
-        // Recorrer cada idioma proporcionado
-        foreach ($idiomas as $lang) {
-
-            // Recorrer cada segmento de la URL
-            foreach ($url_segments as $segment) {
-                // Comparar si el segmento contiene el idioma
-                if (strpos($segment, $lang["idioma"]) !== false) {
-                    return $lang["idioma"];
-                }
-            }
-        }
-
-        return false;
-    }
-}
-
-$marcaSeleccioanda;
-$optionsModelosCoche;
-
-if (!function_exists('rellenarOptionsModelo')) {
-    function rellenarOptionsModelo($marcaSeleccioanda, $optionsModelosCoche)
-    {
-        try {
-            if ($marcaSeleccioanda == "") {
-                $marcaSeleccioanda = "1";
-            }
-
-            if ($marcaSeleccioanda != "") {
-                $serviceModeloCoche = new SoapClient("https://api.menorcalines.com/v3/FerryWebService.asmx?WSDL");
-                $param = array('BrandID' => $marcaSeleccioanda);
-                $respServiceModeloCoche = $serviceModeloCoche->GetVehiclesByBrand($param);
-
-                if ($respServiceModeloCoche->GetVehiclesByBrandResult->ModeloVehiculo->Code) {
-                    $optionsModelosCoche .= "<option value=\"" . $respServiceModeloCoche->GetVehiclesByBrandResult->ModeloVehiculo->Code . "\">" . $respServiceModeloCoche->GetVehiclesByBrandResult->ModeloVehiculo->Name . "</option>";
-                } else {
-                    $cuantos = count($respServiceModeloCoche->GetVehiclesByBrandResult->ModeloVehiculo);
-                    $optionsModelosCoche = "";
-
-                    for ($a = 0; $a < $cuantos; $a++) {
-                        $optionsModelosCoche .= "<option value=\"" . $respServiceModeloCoche->GetVehiclesByBrandResult->ModeloVehiculo[$a]->Code . "\">" . $respServiceModeloCoche->GetVehiclesByBrandResult->ModeloVehiculo[$a]->Name . "</option>";
-                    }
-                }
-
-                return $optionsModelosCoche;
-            }
-        } catch (\Throwable $th) {
-            //var_dump($th);
-            //echo "</br>";
-        }
-    }
+   
 }
 
 
-$optionsModelosCoche = rellenarOptionsModelo("", $optionsModelosCoche);
+// Convertir el valor booleano en una cadena "true" o "false"
+$solo_una_fecha_js = $solo_una_fecha ? 'true' : 'false';
 
+if ($tipo_viaje == "ida") {
+    $solo_una_fecha_js = true;
+}
 global $wpdb;
 $queryIdiomas = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_idiomas");
 $idiomas = $wpdb->get_results($queryIdiomas, ARRAY_A);
 
-$current_language = check_language_in_url($idiomas);
-$idioma = "ES";
-
-if ($current_language != false) {
-    $idioma = $current_language;
-}
+$Insotel_Motor_Functions = new Insotel_Motor_Functions;
+$optionsMarcasCoche = $Insotel_Motor_Functions->getOptionsMarca();
+$idioma = $Insotel_Motor_Functions->check_language_in_url($idiomas);
+$optionsModelosCoche = $Insotel_Motor_Functions->rellenarOptionsModelo("");
 
 $idIdioma = 1;
 
@@ -119,48 +53,36 @@ $constantes = $wpdb->get_results($queryConstantes)[0];
 $queryRutas = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_rutas");
 $rutas = $wpdb->get_results($queryRutas);
 
-$queryPuertos = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_puertos");
+$queryPuertos = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_puertos ORDER BY orden");
 $puertos = $wpdb->get_results($queryPuertos);
 
 
-if (!isset($diaactivo)) {
-    $diaactivo = date("d-m-Y");
-}
-
-
 // PARTIR PRIMER DIA ACTIVO
-$diaini = substr($diaactivo, 0, 2);
-$mesini = substr($diaactivo, 3, 2);
-$anoini = substr($diaactivo, 6, 4);
-$primerdia_es = $diaini . "/" . $mesini . "/" . $anoini;
-$primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
+$dia = substr(date("d-m-Y"), 0, 2);
+$mes = substr(date("d-m-Y"), 3, 2);
+$ano = substr(date("d-m-Y"), 6, 4);
+$primerdia = $dia . "/" . $mes . "/" . $ano;
 
 ?>
 
 <script>
-    let isCargado = false;
+    let init = "init";
     document.addEventListener("DOMContentLoaded", () => {
-        if (!isCargado) {
-            isCargado = true;
-            console.log("No cargado");
-        } else {
-            console.log("Cargado");
-        }
-
+        console.log(init);
         const idioma = "<?php echo $idioma ?>";
         const urlMotor = "<?php echo $constantes->url_motor ?>";
         const promocion = "<?php echo $constantes->promocion ?>";
-        const primerDiaEs = "<?php echo $primerdia_es; ?>";
-        const primerDiEn = "<?php echo $primerdia_en; ?>";
+
+        const solo_una_fecha = <?php echo $solo_una_fecha_js ?>;
+        const tipo_viaje = "<?php echo $tipo_viaje ?>";
+
+        const primerdia = "<?php echo $primerdia; ?>";
         const dateActually = "<?php echo date("d/m/Y"); ?>";
+
         const label_pasajeros = "<?php echo $textosTraducidos["label_pasajeros"] ?>";
-        const tipo_calendario = "<?php echo $tipo_calendario; ?>";
 
         const rutas = <?php echo json_encode($rutas) ?>;
         const puertos = <?php echo json_encode($puertos) ?>;
-
-        const opciones_ida_vuelta = "<?php echo $opciones_ida_vuelta ?>";
-        const tipo_pasajero = "<?php echo $tipo_pasajero ?>";
 
         const dateGeneral = {
             linkedCalendars: true,
@@ -169,16 +91,15 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             drops: "auto",
         };
         const dateFechas = {
-            startDate: primerDiEn,
-            endDate: primerDiEn
+            startDate: primerdia,
+            endDate: primerdia
         };
 
 
         setRutasValueInSelect("origen", "destino", puertos, rutas);
 
         let dateIdioma = paramsByDatepicker(idioma, dateActually);
-        loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
-        loadEventListeners(urlMotor, idioma, opciones_ida_vuelta);
+        loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
         updateDate();
 
         let adultos = 1;
@@ -188,10 +109,9 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         let mascotas = 0;
 
 
-
         /*Cuando cambiar entre ida o ida y vuelta*/
         $("#booking-form #idavue").change(function() {
-            loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
         });
 
         /*Cuando clicka en el boton de aceptar en el dropdown de pasajeros para que se cierre*/
@@ -231,7 +151,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
                 selectDestino.appendChild(option);
             });
 
-            loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
         });
 
         if (document.querySelector("#booking-form #vehiculo") != undefined) {
@@ -285,7 +205,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
         /*Cuando cambia el destino*/
         $("#booking-form #destino").change(function() {
-            loadDatePicker(dateGeneral, dateFechas, dateIdioma, tipo_calendario);
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
         });
 
         /*LISTENERS PASAEJROS */
@@ -312,9 +232,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         if (document.querySelector('#booking-form #ni_ma') != undefined) {
             document.querySelector('#booking-form #ni_ma').addEventListener("click", () => {
                 ninos = $("#booking-form #ninos").val();
-                console.log(ninos);
                 ninos++;
-                console.log(ninos);
                 if (ninos > 10) ninos = 10;
                 $("#booking-form #ninos").val(ninos);
                 calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
@@ -324,9 +242,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         if (document.querySelector('#booking-form #ni_me') != undefined) {
             $('#booking-form #ni_me').click(function() {
                 ninos = $("#booking-form #ninos").val();
-                console.log(ninos);
                 ninos--;
-                console.log(ninos);
                 if (ninos < 0) ninos = 0;
                 $("#booking-form #ninos").val(ninos);
                 calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
@@ -363,14 +279,16 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
             });
         }
 
-        if (document.querySelector('#booking-form be_me') != undefined) {
-            $('#booking-form be_me').click(function() {
+        if (document.querySelector('#booking-form #be_me') != undefined) {
+            $('#booking-form #be_me').click(function() {
                 bebes = $("#booking-form #bebes").val();
                 bebes--;
                 if (bebes < 0) bebes = 0;
                 $("#booking-form #bebes").val(bebes);
                 calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
             });
+        } else {
+            console.log("No entra");
         }
 
         if (document.querySelector('#booking-form #ma_ma') != undefined) {
@@ -439,6 +357,65 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
                 });
         }
 
+        /*Cuando clicka el switch para que se vean las opciones del vehiculo*/
+        if (document.querySelector("#booking-form #switchViajo") != undefined) {
+            $("#booking-form #switchViajo").change(function(e) {
+                vehicini = "20220319";
+                vehicfin = "20220930";
+
+                $("#booking-form #divmarca").removeClass("disabled");
+                $("#booking-form #marca").attr("disabled", false);
+
+                if (!$("#booking-form #switchViajo").is(":checked")) {
+                    $(this).val("0");
+                } else {
+                    $(this).val("1");
+                }
+
+                updateDate();
+
+                ori = $("#booking-form #origen").val();
+                des = $("#booking-form #destino").val();
+                fechaini = $("#booking-form #fechaini").val();
+                fechafin = $("#booking-form #fechafin").val();
+
+                if (idioma == "en") {
+                    fechaini =
+                        fechaini.substr(6, 4) + fechaini.substr(0, 2) + fechaini.substr(3, 2);
+                    fechafin =
+                        fechafin.substr(6, 4) + fechafin.substr(0, 2) + fechafin.substr(3, 2);
+                } else {
+                    fechaini =
+                        fechaini.substr(6, 4) + fechaini.substr(3, 2) + fechaini.substr(0, 2);
+                    fechafin =
+                        fechafin.substr(6, 4) + fechafin.substr(3, 2) + fechafin.substr(0, 2);
+                }
+
+                idavue = $("#booking-form #idavue").val();
+
+                if (idavue == "ida") {
+                    if (fechaini >= vehicini && fechaini <= vehicfin) permisovehi = 1;
+                    else permisovehi = 0;
+                } else {
+                    if (
+                        $("#booking-form #origen").val() == "ibi" ||
+                        $("#booking-form #origen").val() == "for"
+                    ) {
+                        if (fechaini >= vehicini && fechafin <= vehicfin) permisovehi = 1;
+                        else permisovehi = 0;
+                    } else {
+                        permisovehi = 1;
+                    }
+                }
+
+                if ($("#booking-form #switchViajo").is(":checked")) {
+                    $("#booking-form #capaViajo").slideDown("slow");
+                } else {
+                    $("#booking-form #capaViajo").slideUp("slow");
+                }
+            });
+        }
+
 
         // Selecciona el botón de buscar
         document
@@ -465,7 +442,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
                         "#booking-form #fechaini"
                     ).value = `${diaini}-${mesini}-${anoini}`;
 
-                    if (opciones_ida_vuelta != "ida") {
+                    if (tipo_viaje != "ida") {
                         document.querySelector(
                             "#booking-form #fechafin"
                         ).value = `${diafin}-${mesfin}-${anofin}`;
@@ -479,7 +456,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
                         "#booking-form #fechaini"
                     ).value = `${diaini}-${mesini}-${anoini}`;
 
-                    if (opciones_ida_vuelta != "ida") {
+                    if (tipo_viaje != "ida") {
                         document.querySelector(
                             "#booking-form #fechafin"
                         ).value = `${diaini}-${mesini}-${anoini}`;
@@ -529,7 +506,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
         <div id="reservas">
             <div>
                 <?php
-                if ($opciones_ida_vuelta == "seleccionable") {
+                if ($tipo_viaje == "seleccionable") {
                 ?>
                     <div id="dividavue" class="caja"><select id="idavue" class="form-select form-select-solid">
                             <option value="ida"><?= $textosTraducidos["label_solo_ida"] ?></option>
@@ -559,7 +536,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
                 <input type="hidden" name="fechaini" id="fechaini">
 
                 <?php
-                if ($opciones_ida_vuelta != "ida") {
+                if ($tipo_viaje != "ida") {
                 ?>
                     <input type="hidden" name="fechafin" id="fechafin">
 
@@ -584,7 +561,7 @@ $primerdia_en = $diaini . "/" . $mesini . "/" . $anoini; // no se modifica
 
             <div class="salto"></div>
             <?php
-            if ($modo == "normal") {
+            if ($mostrar_vehiculo) {
             ?>
                 <div id="divviajo">
 

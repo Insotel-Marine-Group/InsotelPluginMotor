@@ -1,9 +1,10 @@
 <?php
 global $wpdb;
 $message = '';
-
-// Obtener el nombre de la página actual para construir URLs correctas
+$messageClass = '';
 $page_url = admin_url('admin.php?page=motor/admin/configuracion_textos.php');
+$table_textos = $wpdb->prefix . 'insotel_motor_textos';
+$table_idiomas = $wpdb->prefix . 'insotel_motor_idiomas';
 
 // Manejar la solicitud POST para agregar o actualizar un texto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
@@ -32,18 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $label_mascotas = sanitize_text_field($_POST['label_mascotas']);
     $label_anadir_vehiculo = sanitize_text_field($_POST['label_anadir_vehiculo']);
 
-
-
-    $table_textos = $wpdb->prefix . 'insotel_motor_textos';
-    $table_idiomas = $wpdb->prefix . 'insotel_motor_idiomas';
-
     // Verificar si el texto ya existe para el idioma
     $existing_idioma = $wpdb->get_var($wpdb->prepare(
         "SELECT * FROM $table_idiomas WHERE id = %s",
         $idioma_id,
     ));
-
-
 
     if ($existing_idioma != null) {
         if ($texto_id > 0) {
@@ -77,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 array('id' => $texto_id)
             );
             $message = $result !== false ? 'Texto actualizado correctamente.' : 'Hubo un error al actualizar el texto.';
+            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
         } else {
             $result = $wpdb->insert(
                 $table_textos,
@@ -107,9 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 )
             );
             $message = $result !== false ? 'Texto insertado correctamente.' : 'Hubo un error al insertar el texto.';
+            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
         }
     } else {
         $message = "No existe este idioma $idioma_id";
+        $messageClass = 'alert-warning';
     }
 }
 
@@ -117,14 +114,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
     $texto_id = intval($_GET['id']);
 
-    // Eliminar el texto
-    $table_textos = $wpdb->prefix . 'insotel_motor_textos';
     $result = $wpdb->delete($table_textos, array('id' => $texto_id));
     $message = $result !== false ? 'Texto eliminado correctamente.' : 'Hubo un error al eliminar el texto.';
+    $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+    $_GET['id'] = null;
 }
 
-if (isset($_GET['action']) && $_GET['action'] === 'create' && isset($_GET['idioma_id'])) {
-}
 
 // Obtener la lista de textos
 $textos = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}insotel_motor_textos");
@@ -160,7 +155,7 @@ function getTextoByIdioma($idIdioma, $textos)
 <body>
     <div class="container mt-5">
         <?php if (!empty($message)) : ?>
-            <div id="update-result" class="alert alert-info"><?php echo $message; ?></div>
+            <div id="update-result" class="alert <?php echo $messageClass; ?>"><?php echo $message; ?></div>
         <?php endif; ?>
 
         <h1 class="mb-4">CONFIGURACIÓN DE LOS TEXTOS DEL PLUGIN</h1>
@@ -270,8 +265,16 @@ function getTextoByIdioma($idIdioma, $textos)
                                 <input type="text" class="form-control" id="label_anadir_vehiculo" name="label_anadir_vehiculo" value="<?php echo isset($_GET['label_anadir_vehiculo']) ? $_GET['label_anadir_vehiculo'] : ''; ?>" required>
                             </div>
                         </div>
-
-                        <button id="boton_guardar" name="update_table" type="submit" class="btn btn-success mt-3">Guardar Cambios</button>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <?php
+                            if (isset($_GET['id'])) {
+                            ?>
+                                <a href="<?php echo esc_url($page_url); ?>" class="btn btn-primary mt-3">Volver a la creación</a>
+                            <?php
+                            }
+                            ?>
+                            <button id="boton_guardar" name="update_table" type="submit" class="btn btn-success mt-3">Guardar Cambios</button>
+                        </div>
                     </form>
                 </div>
             </div>

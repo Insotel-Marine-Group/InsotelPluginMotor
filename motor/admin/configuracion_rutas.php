@@ -1,6 +1,7 @@
 <?php
 global $wpdb;
 $message = '';
+$messageClass = '';
 $page_url = admin_url('admin.php?page=motor/admin/configuracion_rutas.php');
 $table_puertos = $wpdb->prefix . 'insotel_motor_puertos';
 $table_rutas = $wpdb->prefix . 'insotel_motor_rutas';
@@ -10,32 +11,49 @@ $table_rutas = $wpdb->prefix . 'insotel_motor_rutas';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $id = intval($_POST['id']);
     $nombre_ruta = sanitize_text_field($_POST['nombre_ruta']);
-    $puerto_ruta_ida = intval($_POST['puerto_ruta_ida']);
-    $puerto_ruta_vuelta = intval($_POST['puerto_ruta_vuelta']);
+    $puerto_ruta_ida = $_POST['puerto_ruta_ida'];
+    $puerto_ruta_vuelta = $_POST['puerto_ruta_vuelta'];
 
 
-    if ($id > 0) {
-        $result = $wpdb->update(
-            $table_rutas,
-            array(
-                'nombre_ruta' => $nombre_ruta,
-                'puerto_ruta_ida' => intval($puerto_ruta_ida),
-                'puerto_ruta_vuelta' => intval($puerto_ruta_vuelta),
-            ),
-            array('id' => $id)
-        );
-        $wpdb->print_error();
-        $message = $result !== false ? 'Ruta actualizada correctamente.' : 'Hubo un error al actualizar la ruta.';
+    // Verificar si el nombre ya existe
+    $existing_nombre = $wpdb->get_var($wpdb->prepare(
+        "SELECT id FROM $table_rutas WHERE nombre_ruta = %s AND id != %d",
+        $nombre_ruta,
+        $id
+    ));
+
+    if ($puerto_ruta_ida == $puerto_ruta_vuelta) {
+        $message = "Los puertos de origen y destino no pueden coincidir.";
+        $messageClass = 'alert-warning';
+    } else if ($existing_nombre != null) {
+        $message = "El nombre de la ruta ya existe.";
+        $messageClass = 'alert-warning';
     } else {
-        $result = $wpdb->insert(
-            $table_rutas,
-            array(
-                'nombre_ruta' => $nombre_ruta,
-                'puerto_ruta_ida' => intval($puerto_ruta_ida),
-                'puerto_ruta_vuelta' => intval($puerto_ruta_vuelta),
-            )
-        );
-        $message = $result !== false ? 'Ruta insertada correctamente.' : "Hubo un error al insertar la ruta.";
+        if ($id > 0) {
+            $result = $wpdb->update(
+                $table_rutas,
+                array(
+                    'nombre_ruta' => $nombre_ruta,
+                    'puerto_ruta_ida' => intval($puerto_ruta_ida),
+                    'puerto_ruta_vuelta' => intval($puerto_ruta_vuelta),
+                ),
+                array('id' => $id)
+            );
+            $wpdb->print_error();
+            $message = $result !== false ? 'Ruta actualizada correctamente.' : 'Hubo un error al actualizar la ruta.';
+            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+        } else {
+            $result = $wpdb->insert(
+                $table_rutas,
+                array(
+                    'nombre_ruta' => $nombre_ruta,
+                    'puerto_ruta_ida' => intval($puerto_ruta_ida),
+                    'puerto_ruta_vuelta' => intval($puerto_ruta_vuelta),
+                )
+            );
+            $message = $result !== false ? 'Ruta insertada correctamente.' : "Hubo un error al insertar la ruta.";
+            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+        }
     }
 }
 
@@ -46,11 +64,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])
     // Eliminar el texto
     $result = $wpdb->delete($table_rutas, array('id' => $id));
     $message = $result !== false ? 'Rutas eliminado correctamente.' : 'Hubo un error al eliminar la ruta.';
+    $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+    $_GET['id'] = null;
 }
 
 
 // Obtener la lista de textos
-$puertos = $wpdb->get_results("SELECT * FROM $table_puertos");
+$puertos = $wpdb->get_results("SELECT * FROM $table_puertos ORDER BY orden");
 $rutas = $wpdb->get_results("SELECT * FROM $table_rutas");
 
 
@@ -75,7 +95,7 @@ function getNamePuertoById($id_puerto, $puertos)
 <body>
     <div class="container mt-5">
         <?php if (!empty($message)) : ?>
-            <div id="update-result" class="alert alert-info"><?php echo $message; ?></div>
+            <div id="update-result" class="alert <?php echo $messageClass; ?>"><?php echo $message; ?></div>
         <?php endif; ?>
 
         <h1 class="mb-4">CONFIGURACIÓN DE LAS RUTAS DEL PLUGIN</h1>
@@ -120,9 +140,14 @@ function getNamePuertoById($id_puerto, $puertos)
                         </div>
 
                         <div class="d-flex align-items-center justify-content-between">
+                            <?php
+                            if (isset($_GET['id'])) {
+                            ?>
+                                <a href="<?php echo esc_url($page_url); ?>" class="btn btn-primary mt-3">Volver a la creación</a>
+                            <?php
+                            }
+                            ?>
                             <button id="boton_guardar" name="update_table" type="submit" class="btn btn-success mt-3">Guardar Cambios</button>
-                            <?php $disabled = isset($_GET['id']) ? "" : "disabled" ?>
-                            <button id="boton_guardar" name="reset_table" type="submit" class="btn btn-primary mt-3" <?php echo $disabled; ?>>Volver a la creación</button>
                         </div>
                     </form>
                 </div>

@@ -3,7 +3,7 @@
  * Plugin Name:       MOTOR INSOTEL MARINE GROUP
  * Plugin URI:        https://softme.es/
  * Description:       MOTOR INSOTEL MARINE GROUP desarrollado por SOFTME.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            SOFTME
@@ -41,9 +41,22 @@ add_shortcode('insotel_motor', 'insotel_motor_shortcode');
 
 function insotel_motor_shortcode($atts)
 {
+    $id_servicio = $atts['id_servicio'];
+    $tipo_servicio = $atts['tipo_servicio'];
+    $mostrar_vehiculo = filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN);
+    $solo_una_fecha = filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN);
+    $tipo_viaje = $atts['tipo_viaje'];
+    $solo_adultos = filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN);
+    
+
     $atts = shortcode_atts(
         array(
-            'modo' => "normal",
+            'id_servicio' =>  $id_servicio,
+            'tipo_servicio' =>  $tipo_servicio,
+            'mostrar_vehiculo' =>  $mostrar_vehiculo,
+            'solo_una_fecha' =>  $solo_una_fecha,
+            'tipo_viaje' =>  $tipo_viaje,
+            'solo_adultos' =>  $solo_adultos
         ),
         $atts,
         'insotel_motor'
@@ -62,60 +75,14 @@ function insotel_motor_shortcode($atts)
     wp_enqueue_style('insotel_motor_font_awesome_css');
     wp_enqueue_style('insotel_motor_main_css');
     wp_enqueue_script('insotel_motor_main_js');
+    
 
     wp_enqueue_script('insotel_motor_daterangepicker_js');
     wp_enqueue_style('insotel_motor_daterangepicker_css');
 
     ob_start();
-    include(WPP_MOTOR_PATH . '/public/main.php');
-    $content = ob_get_contents();
-    ob_end_clean();
-    return $content;
-}
-
-
-
-//Añadir Shortcode
-add_shortcode('insotel_motor_servicios', 'insotel_motor_servicios_shortcode');
-
-function insotel_motor_servicios_shortcode($atts)
-{
-    $id_servicio = intval($atts['id_servicio']);
-    $tipo_servicio = $atts['tipo_servicio'];
-    $tipo_calendario = $atts['tipo_calendario'];
-    $opciones_ida_vuelta = $atts['opciones_ida_vuelta'];
-    $tipo_pasajero = $atts['tipo_pasajero'];
-
-    $atts = shortcode_atts(
-        array(
-            'modo' => "modo_servicios",
-            'id_servicio' =>  $id_servicio,
-            'tipo_servicio' =>  $tipo_servicio,
-            'tipo_calendario' =>  $tipo_calendario,
-            'opciones_ida_vuelta' =>  $opciones_ida_vuelta,
-            'tipo_pasajero' =>  $tipo_pasajero
-        ),
-        $atts,
-        'insotel_motor_servicios'
-    );
-
-    // Encolar los estilos y scripts necesarios
-    wp_enqueue_script('insotel_motor_jquery_js');
-    wp_enqueue_script('insotel_motor_moment_js');
-
-    wp_enqueue_style('insotel_motor_bootstrap_css');
-    wp_enqueue_script('insotel_motor_popper_js');
-    wp_enqueue_script('insotel_motor_bootstrap_js');
-
-    wp_enqueue_style('insotel_motor_font_awesome_css');
-    wp_enqueue_style('insotel_motor_main_css');
-    wp_enqueue_script('insotel_motor_main_js');
-
-    wp_enqueue_style('insotel_motor_daterangepicker_css');
-    wp_enqueue_script('insotel_motor_daterangepicker_js');
-
-    ob_start();
-    include(WPP_MOTOR_PATH . '/public/main.php');
+    include_once(WPP_MOTOR_PATH . '/helpers/Insotel_Motor_Functions.php');
+    include_once(WPP_MOTOR_PATH . '/public/main.php');
     $content = ob_get_contents();
     ob_end_clean();
     return $content;
@@ -123,7 +90,6 @@ function insotel_motor_servicios_shortcode($atts)
 
 function registrar_librerias_insotel_motor()
 {
-
     // Registrar main.css
     wp_register_style(
         'insotel_motor_main_css',
