@@ -323,7 +323,6 @@ class Insotel_Motor_Bd
         }
     }
 
-
     public function create_table_insotel_motor_rutas($wpdb)
     {
         $charset_collate = $wpdb->get_charset_collate();
