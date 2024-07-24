@@ -7,18 +7,18 @@ $solo_una_fecha = false;
 $tipo_viaje = "seleccionable";
 $solo_adultos = false;
 
+
 if (isset($atts)) {
+
     $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
     $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
-    $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : false;
+    $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : true;
     $solo_una_fecha = isset($atts['solo_una_fecha']) ? filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN) : false;
-
     $tipo_viaje = isset($atts['tipo_viaje']) ? $atts['tipo_viaje'] : "seleccionable";
     $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
 
    
 }
-
 
 // Convertir el valor booleano en una cadena "true" o "false"
 $solo_una_fecha_js = $solo_una_fecha ? 'true' : 'false';
@@ -36,7 +36,6 @@ $idioma = $Insotel_Motor_Functions->check_language_in_url($idiomas);
 $optionsModelosCoche = $Insotel_Motor_Functions->rellenarOptionsModelo("");
 
 $idIdioma = 1;
-
 foreach ($idiomas as $idiomaComprove) {
     if ($idiomaComprove->idioma == $idioma) {
         $idIdioma = $idiomaComprove->id;
@@ -70,6 +69,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
     document.addEventListener("DOMContentLoaded", () => {
         console.log(init);
         const idioma = "<?php echo $idioma ?>";
+        console.log(idioma);
         const urlMotor = "<?php echo $constantes->url_motor ?>";
         const promocion = "<?php echo $constantes->promocion ?>";
 
@@ -287,8 +287,6 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
                 $("#booking-form #bebes").val(bebes);
                 calcularPasajeros(adultos, ninos, seniors, bebes, label_pasajeros);
             });
-        } else {
-            console.log("No entra");
         }
 
         if (document.querySelector('#booking-form #ma_ma') != undefined) {
@@ -422,7 +420,6 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
             .querySelector("#booking-form #botonbuscar")
             .addEventListener("click", function(ev) {
                 console.log("Has clickado el boton de buscar reserva");
-
                 const fechas = document.querySelector("#booking-form #fecha-viaje").value;
                 if (fechas.includes("-")) {
                     const fechasArray = fechas.split("-");

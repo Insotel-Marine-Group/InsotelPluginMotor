@@ -48,9 +48,6 @@ function setRutasValueInSelect(idOrigen, idDestino, puertos, rutas) {
     puertos
   );
 
-  console.log("Rutas:", rutas);
-  console.log("Options destino:", optionsDestino);
-
   const selectDestino = document.querySelector(`#${idDestino}`);
   selectDestino.innerHTML = "";
 

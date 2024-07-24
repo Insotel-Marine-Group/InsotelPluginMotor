@@ -31,14 +31,14 @@ class Insotel_Motor_Functions
 
         // Dividir la URL en segmentos por las barras "/"
         $url_segments = explode('/', $current_url);
-
+    
         // Recorrer cada idioma proporcionado
         foreach ($idiomas as $lang) {
 
             // Recorrer cada segmento de la URL
             foreach ($url_segments as $segment) {
                 // Comparar si el segmento contiene el idioma
-                if (strpos($segment, $lang["idioma"]) !== false) {
+                if ($segment == $lang["idioma"]) {
                     return $lang["idioma"];
                 }
             }

@@ -41,12 +41,13 @@ add_shortcode('insotel_motor', 'insotel_motor_shortcode');
 
 function insotel_motor_shortcode($atts)
 {
-    $id_servicio = $atts['id_servicio'];
-    $tipo_servicio = $atts['tipo_servicio'];
-    $mostrar_vehiculo = filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN);
-    $solo_una_fecha = filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN);
-    $tipo_viaje = $atts['tipo_viaje'];
-    $solo_adultos = filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN);
+    
+    $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
+    $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
+    $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : true;
+    $solo_una_fecha = isset($atts['solo_una_fecha']) ? filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN) : false;
+    $tipo_viaje = isset($atts['tipo_viaje']) ? $atts['tipo_viaje'] : "seleccionable";
+    $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
     
 
     $atts = shortcode_atts(
