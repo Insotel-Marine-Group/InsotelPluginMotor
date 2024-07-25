@@ -205,7 +205,7 @@ function getTextoByIdioma($idIdioma, $textos)
                                 <input type="text" class="form-control" id="label_adultos" name="label_adultos" value="<?php echo isset($_GET['label_adultos']) ? $_GET['label_adultos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
-                                <label for="label_ninos">Label ninos:</label><br>
+                                <label for="label_ninos">Label niños:</label><br>
                                 <input type="text" class="form-control" id="label_ninos" name="label_ninos" value="<?php echo isset($_GET['label_ninos']) ? $_GET['label_ninos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">

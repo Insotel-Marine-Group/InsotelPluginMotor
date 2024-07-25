@@ -295,32 +295,32 @@ class Insotel_Motor_Bd
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count == 0) {
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre' => 'Mallorca',
-                    'valor' => 'mall',
-                    'orden' => '1'
-                )
-            );
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre' => 'Menorca',
-                    'valor' => 'men',
-                    'orden' => '2'
-                )
-            );
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre' => 'Barcelona',
-                    'valor' => 'bar',
-                    'orden' => '3'
-                )
-            );
-        }
+        // if ($count == 0) {
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre' => 'Mallorca',
+        //             'valor' => 'mall',
+        //             'orden' => '1'
+        //         )
+        //     );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre' => 'Menorca',
+        //             'valor' => 'men',
+        //             'orden' => '2'
+        //         )
+        //     );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre' => 'Barcelona',
+        //             'valor' => 'bar',
+        //             'orden' => '3'
+        //         )
+        //     );
+        // }
     }
 
     public function create_table_insotel_motor_rutas($wpdb)
@@ -349,60 +349,60 @@ class Insotel_Motor_Bd
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count == 0) {
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre_ruta' => 'Mallorca - Menorca',
-                    'puerto_ruta_ida' => 1,
-                    'puerto_ruta_vuelta' => 2
-                )
-            );
+        // if ($count == 0) {
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre_ruta' => 'Mallorca - Menorca',
+        //             'puerto_ruta_ida' => 1,
+        //             'puerto_ruta_vuelta' => 2
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre_ruta' => 'Menorca - Mallorca',
-                    'puerto_ruta_ida' => 2,
-                    'puerto_ruta_vuelta' => 1
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre_ruta' => 'Menorca - Mallorca',
+        //             'puerto_ruta_ida' => 2,
+        //             'puerto_ruta_vuelta' => 1
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre_ruta' => 'Barcelona - Menorca',
-                    'puerto_ruta_ida' => 3,
-                    'puerto_ruta_vuelta' => 2
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre_ruta' => 'Barcelona - Menorca',
+        //             'puerto_ruta_ida' => 3,
+        //             'puerto_ruta_vuelta' => 2
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre_ruta' => 'Menorca - Barcelona',
-                    'puerto_ruta_ida' => 2,
-                    'puerto_ruta_vuelta' => 3
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre_ruta' => 'Menorca - Barcelona',
+        //             'puerto_ruta_ida' => 2,
+        //             'puerto_ruta_vuelta' => 3
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre_ruta' => 'Barcelona - Mallorca',
-                    'puerto_ruta_ida' => 3,
-                    'puerto_ruta_vuelta' => 1
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre_ruta' => 'Barcelona - Mallorca',
+        //             'puerto_ruta_ida' => 3,
+        //             'puerto_ruta_vuelta' => 1
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'nombre_ruta' => 'Mallorca - Barcelona',
-                    'puerto_ruta_ida' => 1,
-                    'puerto_ruta_vuelta' => 3
-                )
-            );
-        }
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'nombre_ruta' => 'Mallorca - Barcelona',
+        //             'puerto_ruta_ida' => 1,
+        //             'puerto_ruta_vuelta' => 3
+        //         )
+        //     );
+        // }
     }
 }

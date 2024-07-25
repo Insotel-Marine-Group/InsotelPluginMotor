@@ -23,6 +23,7 @@
                     <div class="w-100 border-1">tipo_servicio Ex:[insotel_motor tipo_servicio="EXPERIENCIAS"]</div>
                     <div class="w-100 border-1">mostrar_vehiculo Ex:[insotel_motor mostrar_vehiculo="true"]</div>
                     <div class="w-100 border-1">solo_una_fecha Ex:[insotel_motor solo_una_fecha="true"]</div>
+                    <div class="w-100 border-1">solo_adultos Ex:[insotel_motor solo_adultos="true"]</div>
                     <div class="w-100 border-1">tipo_viaje Ex:[insotel_motor tipo_viaje="seleccionable"], [insotel_motor tipo_viaje="ida"], [insotel_motor tipo_viaje="vuelta"]</div>
                 </div>
             </div>
