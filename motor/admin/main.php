@@ -8,7 +8,7 @@
 
 <body>
     <div class="container mt-5">
-        <h1>INSOTEL Motor</h1>
+        <h1>INSOTEL MOTOR</h1>
         <p>Usar el plugin de reservas de INSOTEL MARINE GROUP es tan sencillo como colocar el siguiente shortcode en el lugar de tu web donde quieras que se muestre:
         <p>
         <div class="container text-bg-light p-5 shadow w-100 h-100">
@@ -16,7 +16,7 @@
                 <div class="col">
 
                     <div class="w-100 border-1">SHORTCODES</div>
-                    <div class="w-100 border-1">[insotel_motor]</div>
+                    <div class="w-100 border-1">[ insotel_motor ]</div>
 
                     <div class="w-100 border-1">PARAMETROS DE SHORTCODES</div>
                     <div class="w-100 border-1">id_servicio Ex:[insotel_motor id_servicio="1006"]</div>

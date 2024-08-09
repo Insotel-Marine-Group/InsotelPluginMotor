@@ -2,8 +2,9 @@
 global $wpdb;
 $message = '';
 $messageClass = '';
-$queryConstantes = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_constantes");
-$constantes = $wpdb->get_results($queryConstantes)[0];
+$table_insotel_motor_constantes = $wpdb->prefix . 'insotel_motor_constantes';
+$queryConstantes = $wpdb->get_results("SELECT * FROM $table_insotel_motor_constantes");
+$constantes = $queryConstantes[0];
 
 
 // Manejar la solicitud POST
@@ -14,15 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $promocion = sanitize_text_field($_POST['promocion']);
     $origen = sanitize_text_field($_POST['origen']);
     $canal_reserva = sanitize_text_field($_POST['canal_reserva']);
+    $is_promocion = $_POST['is_promocion'] === "on" ? true : false;
 
-
+    
     // Actualizar la tabla
-    $table_insotel_motor_constantes = $wpdb->prefix . 'insotel_motor_constantes';
+    
 
     // Verificar si el idioma ya existe
-    $existing_constantes = $wpdb->get_var($wpdb->prepare(
-        "SELECT url_motor FROM $table_insotel_motor_constantes"
-    ));
+    $existing_constantes = $wpdb->get_var(
+        "SELECT * FROM $table_insotel_motor_constantes"
+    );
 
 
     if ($existing_constantes === null) {
@@ -32,12 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 'url_motor' => $url_motor,
                 'promocion' => $promocion,
                 'canal_reserva' => $canal_reserva,
-                'origen' => $origen
+                'origen' => $origen,
+                'is_promocion' => $is_promocion
             )
         );
 
         if ($result !== false) {
-            $constantes = $wpdb->get_results($queryConstantes)[0];
+            $queryConstantes = $wpdb->get_results("SELECT * FROM $table_insotel_motor_constantes");
+            $constantes = $queryConstantes[0];
             $message = 'La tabla se ha insertado correctamente.';
             $messageClass = 'alert-info';
         } else {
@@ -52,12 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 'promocion' => $promocion,
                 'canal_reserva' => $canal_reserva,
                 'origen' => $origen,
+                'is_promocion' => $is_promocion
             ),
             array('id' => "1")
         );
 
         if ($result !== false) {
-            $constantes = $wpdb->get_results($queryConstantes)[0];
+            $queryConstantes = $wpdb->get_results("SELECT * FROM $table_insotel_motor_constantes");
+            $constantes = $queryConstantes[0];
             $message = 'La tabla se ha actualizado correctamente.';
             $messageClass = 'alert-info';
         } else {
@@ -78,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
             <div id="update-result" class="alert <?php echo $messageClass; ?>"><?php echo $message; ?></div>
         <?php endif; ?>
 
-        <h1>CONFIGURACIÓN CONSTANTES DEL PLUGIN</h1>
+        <h1>CONFIGURACIÓN DE PARAMETROS GLOBALES DEL PLUGIN</h1>
         <div class="container text-bg-light p-5 shadow mt-5">
             <form method="post" action="" class="pb-4" id="formulario_configuracion" name="formulario_configuracion">
                 <div class="row pt-1">

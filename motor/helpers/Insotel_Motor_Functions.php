@@ -38,7 +38,7 @@ class Insotel_Motor_Functions
             // Recorrer cada segmento de la URL
             foreach ($url_segments as $segment) {
                 // Comparar si el segmento contiene el idioma
-                if ($segment == $lang["idioma"]) {
+                if (strtolower($segment) == strtolower($lang["idioma"])) {
                     return $lang["idioma"];
                 }
             }

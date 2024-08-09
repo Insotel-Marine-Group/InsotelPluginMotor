@@ -1116,7 +1116,6 @@ form#booking-form * {
     position: relative;
     z-index: 1500;
     width: 100%;
-    min-height: 180px;
     height: auto;
     margin: auto;
 }
@@ -1124,7 +1123,6 @@ form#booking-form * {
 @media screen and (max-width: 1600px) {
     #divreservas {
         width: 100%;
-        min-height: 180px;
     }
 }
 
@@ -1138,7 +1136,6 @@ form#booking-form * {
     flex-direction: column;
     z-index: 400;   
     width: 100%;
-    min-height: 80px;
     height: auto;
     margin: auto;
     padding: 10px 20px;

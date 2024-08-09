@@ -77,10 +77,11 @@ $rutas = $wpdb->get_results("SELECT * FROM $table_rutas");
 
 function getNamePuertoById($id_puerto, $puertos)
 {
+
     $valorDevuelto = "";
     foreach ($puertos as $puerto) {
         if ($puerto->id == $id_puerto) {
-            $valorDevuelto = $puerto->nombre_ruta;
+            $valorDevuelto = $puerto->nombre;
         }
     }
     return $valorDevuelto;
@@ -152,7 +153,7 @@ function getNamePuertoById($id_puerto, $puertos)
                     </form>
                 </div>
             </div>
-            <div class="card shadow-sm" style="min-width: 500px;">
+            <div class="card shadow-sm" style="min-width: 700px;">
                 <div class="card-header">
                     <h2 class="h5 mb-0">Lista de Rutas</h2>
                 </div>
@@ -160,15 +161,19 @@ function getNamePuertoById($id_puerto, $puertos)
                     <table class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th>Nombre Ruta</th>
-                                <th>Acciones</th>
+                                <th style="white-space: nowrap;">Nombre Ruta</th>
+                                <th style="white-space: nowrap;">Puerto Origen</th>
+                                <th style="white-space: nowrap;">Puerto Destino</th>
+                                <th style="white-space: nowrap;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($rutas as $ruta) : ?>
                                 <tr>
-                                    <td><?php echo $ruta->nombre_ruta ?></td>
-                                    <td>
+                                    <td style="white-space: nowrap;"><?php echo $ruta->nombre_ruta ?></td>
+                                    <td style="white-space: nowrap;"><?php echo getNamePuertoById($ruta->puerto_ruta_ida, $puertos); ?></td>
+                                    <td style="white-space: nowrap;"><?php echo getNamePuertoById($ruta->puerto_ruta_vuelta, $puertos); ?></td>
+                                    <td style="white-space: nowrap;">
                                         <a href="
                                     <?php
                                     echo esc_url(add_query_arg(

@@ -129,8 +129,10 @@ function paramsByDatepicker(lang, dateActually) {
 
 function idavuelta() {
   if (document.querySelector("#idavue").value == "ida") {
+    console.log("IDA");
     return true;
   } else {
+    console.log("IDA-VUELTA");
     return false;
   }
 }

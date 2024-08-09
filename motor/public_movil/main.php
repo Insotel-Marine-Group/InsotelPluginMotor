@@ -17,21 +17,6 @@ if (isset($atts)) {
     $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
 }
 
-
-$promoUrl = "";
-
-if (isset($_GET["promo"])) {
-    $promoUrl = $_GET["promo"];
-} else if (isset($_GET["p"])) {
-    $promoUrl = $_GET["p"];
-} else if (isset($_GET["code"])) {
-    $promoUrl = $_GET["code"];
-} else if (isset($_GET["codigo"])) {
-    $promoUrl = $_GET["codigo"];
-} else if (isset($_GET["c"])) {
-    $promoUrl = $_GET["c"];
-}
-
 // Convertir el valor booleano en una cadena "true" o "false"
 $solo_una_fecha_js = $solo_una_fecha ? 'true' : 'false';
 
@@ -61,10 +46,6 @@ $textosTraducidos = $wpdb->get_results($queryTextos, ARRAY_A)[0];
 $queryConstantes = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_constantes");
 $constantes = $wpdb->get_results($queryConstantes)[0];
 
-if (empty($constantes->promocion) && !empty($promoUrl)) {
-    $constantes->promocion = $promoUrl;
-}
-
 $queryRutas = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_rutas");
 $rutas = $wpdb->get_results($queryRutas);
 
@@ -81,9 +62,20 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 ?>
 
 <script>
-    if (window.innerWidth >= 980) {
+    if (window.innerWidth <= 980) {
         document.addEventListener("DOMContentLoaded", () => {
-            console.log("ENTRA EN ESCRITORIO");
+            console.log("ENTRA EN MÓVIL");
+
+            let forms = document.querySelectorAll(".bookingForm");
+            console.log(forms);
+            forms.forEach(form => {
+                if (!form.classList.contains("bookingFormMovil")) {
+                    console.log(form);
+                    form.remove();
+                }
+            });
+
+
             const idioma = "<?php echo $idioma ?>";
             const urlMotor = "<?php echo $constantes->url_motor ?>";
             const promocion = "<?php echo $constantes->promocion ?>";
@@ -114,7 +106,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
             setRutasValueInSelect("origen", "destino", puertos, rutas);
 
             let dateIdioma = paramsByDatepicker(idioma, dateActually);
-            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, 'idavue', 'fecha-viaje');
             updateDate();
 
             let adultos = 1;
@@ -126,7 +118,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 
             /*Cuando cambiar entre ida o ida y vuelta*/
             $("#booking-form #idavue").change(function() {
-                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, 'idavue', 'fecha-viaje');
             });
 
             /*Cuando clicka en el boton de aceptar en el dropdown de pasajeros para que se cierre*/
@@ -166,7 +158,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
                     selectDestino.appendChild(option);
                 });
 
-                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, 'idavue', 'fecha-viaje');
             });
 
             if (document.querySelector("#booking-form #vehiculo") != undefined) {
@@ -516,14 +508,26 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
                     // Envía el formulario
                     if (getTotalPasajeros() > 0) {
                         document.querySelector("#booking-form").submit();
+                    } else {
+                        console.log("NO TIENES SUFICIENTES PASAJEROS");
                     }
                 });
+        });
+    } else {
+        document.addEventListener("DOMContentLoaded", () => {
+            let forms = document.querySelectorAll(".bookingForm");
+            forms.forEach(form => {
+                if (form.classList.contains("bookingFormMovil")) {
+                    console.log(form);
+                    form.remove();
+                }
+            });
         });
     }
 </script>
 
 
-<form id="booking-form" name="booking-form" class="bookingForm" target="_blank" action="#" method="POST" form-type="POST">
+<form id="booking-form" class="bookingForm bookingFormMovil" name="booking-form" target="_blank" action="#" method="POST" form-type="POST">
     <input type="hidden" name="canalreserva" id="canalreserva" value="<?php echo $constantes->canal_reserva; ?>">
     <input type="hidden" name="origin" id="origin" value="<?php echo $constantes->origen; ?>">
 

@@ -12,19 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $idioma_id = intval($_POST['idioma_id']);
     $label_solo_ida = sanitize_text_field($_POST['label_solo_ida']);
     $label_ida_y_vuelta = sanitize_text_field($_POST['label_ida_y_vuelta']);
-    $label_trayecto = sanitize_text_field($_POST['label_trayecto']);
-    $label_fecha_viaje = sanitize_text_field($_POST['label_fecha_viaje']);
     $label_pasajeros = sanitize_text_field($_POST['label_pasajeros']);
-    $label_codigo_promocion = sanitize_text_field($_POST['label_codigo_promocion']);
     $label_adultos = sanitize_text_field($_POST['label_adultos']);
     $label_ninos = sanitize_text_field($_POST['label_ninos']);
     $label_seniors = sanitize_text_field($_POST['label_seniors']);
     $label_bebes = sanitize_text_field($_POST['label_bebes']);
-    $label_descuentos = sanitize_text_field($_POST['label_descuentos']);
-    $label_sin_descuentos = sanitize_text_field($_POST['label_sin_descuentos']);
+    $label_familia = sanitize_text_field($_POST['label_familia']);
     $label_fn_general = sanitize_text_field($_POST['label_fn_general']);
     $label_fn_especial = sanitize_text_field($_POST['label_fn_especial']);
-    $label_anos = sanitize_text_field($_POST['label_anos']);
     $label_reservar = sanitize_text_field($_POST['label_reservar']);
     $label_edad_adultos = sanitize_text_field($_POST['label_edad_adultos']);
     $label_edad_ninos = sanitize_text_field($_POST['label_edad_ninos']);
@@ -32,6 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $label_edad_bebes = sanitize_text_field($_POST['label_edad_bebes']);
     $label_mascotas = sanitize_text_field($_POST['label_mascotas']);
     $label_anadir_vehiculo = sanitize_text_field($_POST['label_anadir_vehiculo']);
+    $label_tipo_vehiculo = sanitize_text_field($_POST['label_tipo_vehiculo']);
+    $label_marca = sanitize_text_field($_POST['label_marca']);
+    $label_modelo = sanitize_text_field($_POST['label_modelo']);
+    $label_aceptar = sanitize_text_field($_POST['label_aceptar']);
 
     // Verificar si el texto ya existe para el idioma
     $existing_idioma = $wpdb->get_var($wpdb->prepare(
@@ -47,19 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     'idioma_id' => $idioma_id,
                     'label_solo_ida' => $label_solo_ida,
                     'label_ida_y_vuelta' => $label_ida_y_vuelta,
-                    'label_trayecto' => $label_trayecto,
-                    'label_fecha_viaje' => $label_fecha_viaje,
                     'label_pasajeros' => $label_pasajeros,
-                    'label_codigo_promocion' => $label_codigo_promocion,
                     'label_adultos' => $label_adultos,
                     'label_ninos' => $label_ninos,
                     'label_seniors' => $label_seniors,
                     'label_bebes' => $label_bebes,
-                    'label_descuentos' => $label_descuentos,
-                    'label_sin_descuentos' => $label_sin_descuentos,
+                    'label_familia' => $label_familia,
                     'label_fn_general' => $label_fn_general,
                     'label_fn_especial' => $label_fn_especial,
-                    'label_anos' => $label_anos,
                     'label_reservar' => $label_reservar,
                     'label_edad_adultos' => $label_edad_adultos,
                     'label_edad_ninos' => $label_edad_ninos,
@@ -67,6 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     'label_edad_bebes' => $label_edad_bebes,
                     'label_mascotas' => $label_mascotas,
                     'label_anadir_vehiculo' => $label_anadir_vehiculo,
+                    'label_tipo_vehiculo' => $label_tipo_vehiculo,
+                    'label_marca' => $label_marca,
+                    'label_modelo' => $label_modelo,
+                    'label_aceptar' => $label_aceptar,
                 ),
                 array('id' => $texto_id)
             );
@@ -79,19 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     'idioma_id' => $idioma_id,
                     'label_solo_ida' => $label_solo_ida,
                     'label_ida_y_vuelta' => $label_ida_y_vuelta,
-                    'label_trayecto' => $label_trayecto,
-                    'label_fecha_viaje' => $label_fecha_viaje,
                     'label_pasajeros' => $label_pasajeros,
-                    'label_codigo_promocion' => $label_codigo_promocion,
                     'label_adultos' => $label_adultos,
                     'label_ninos' => $label_ninos,
                     'label_seniors' => $label_seniors,
                     'label_bebes' => $label_bebes,
-                    'label_descuentos' => $label_descuentos,
-                    'label_sin_descuentos' => $label_sin_descuentos,
+                    'label_familia' => $label_familia,
                     'label_fn_general' => $label_fn_general,
                     'label_fn_especial' => $label_fn_especial,
-                    'label_anos' => $label_anos,
                     'label_reservar' => $label_reservar,
                     'label_edad_adultos' => $label_edad_adultos,
                     'label_edad_ninos' => $label_edad_ninos,
@@ -99,6 +92,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     'label_edad_bebes' => $label_edad_bebes,
                     'label_mascotas' => $label_mascotas,
                     'label_anadir_vehiculo' => $label_anadir_vehiculo,
+                    'label_tipo_vehiculo' => $label_tipo_vehiculo,
+                    'label_marca' => $label_marca,
+                    'label_modelo' => $label_modelo,
+                    'label_aceptar' => $label_aceptar,
                 )
             );
             $message = $result !== false ? 'Texto insertado correctamente.' : 'Hubo un error al insertar el texto.';
@@ -185,20 +182,8 @@ function getTextoByIdioma($idIdioma, $textos)
                                 <input type="text" class="form-control" id="label_ida_y_vuelta" name="label_ida_y_vuelta" value="<?php echo isset($_GET['label_ida_y_vuelta']) ? $_GET['label_ida_y_vuelta'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
-                                <label for="label_trayecto">Label trayecto:</label><br>
-                                <input type="text" class="form-control" id="label_trayecto" name="label_trayecto" value="<?php echo isset($_GET['label_trayecto']) ? $_GET['label_trayecto'] : ''; ?>" required>
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="label_fecha_viaje">Label fech viaje:</label><br>
-                                <input type="text" class="form-control" id="label_fecha_viaje" name="label_fecha_viaje" value="<?php echo isset($_GET['label_fecha_viaje']) ? $_GET['label_fecha_viaje'] : ''; ?>" required>
-                            </div>
-                            <div class="col-sm-6">
                                 <label for="label_pasajeros">Label pasajeros:</label><br>
                                 <input type="text" class="form-control" id="label_pasajeros" name="label_pasajeros" value="<?php echo isset($_GET['label_pasajeros']) ? $_GET['label_pasajeros'] : ''; ?>" required>
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="label_codigo_promocion">Label codigo promocion:</label><br>
-                                <input type="text" class="form-control" id="label_codigo_promocion" name="label_codigo_promocion" value="<?php echo isset($_GET['label_codigo_promocion']) ? $_GET['label_codigo_promocion'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_adultos">Label adultos:</label><br>
@@ -217,12 +202,8 @@ function getTextoByIdioma($idIdioma, $textos)
                                 <input type="text" class="form-control" id="label_bebes" name="label_bebes" value="<?php echo isset($_GET['label_bebes']) ? $_GET['label_bebes'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
-                                <label for="label_descuentos">Label descuentos:</label><br>
-                                <input type="text" class="form-control" id="label_descuentos" name="label_descuentos" value="<?php echo isset($_GET['label_descuentos']) ? $_GET['label_descuentos'] : ''; ?>" required>
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="label_sin_descuentos">Label sin descuentos:</label><br>
-                                <input type="text" class="form-control" id="label_sin_descuentos" name="label_sin_descuentos" value="<?php echo isset($_GET['label_sin_descuentos']) ? $_GET['label_sin_descuentos'] : ''; ?>" required>
+                                <label for="label_familia">Label familia:</label><br>
+                                <input type="text" class="form-control" id="label_familia" name="label_familia" value="<?php echo isset($_GET['label_familia']) ? $_GET['label_familia'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_fn_general">Label fn general:</label><br>
@@ -231,10 +212,6 @@ function getTextoByIdioma($idIdioma, $textos)
                             <div class="col-sm-6">
                                 <label for="label_fn_especial">Label fn especial:</label><br>
                                 <input type="text" class="form-control" id="label_fn_especial" name="label_fn_especial" value="<?php echo isset($_GET['label_fn_especial']) ? $_GET['label_fn_especial'] : ''; ?>" required>
-                            </div>
-                            <div class="col-sm-6">
-                                <label for="label_anos">Label anos:</label><br>
-                                <input type="text" class="form-control" id="label_anos" name="label_anos" value="<?php echo isset($_GET['label_anos']) ? $_GET['label_anos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_reservar">Label reservar:</label><br>
@@ -263,6 +240,22 @@ function getTextoByIdioma($idIdioma, $textos)
                             <div class="col-sm-6">
                                 <label for="label_anadir_vehiculo">Label añadir vehiculo:</label><br>
                                 <input type="text" class="form-control" id="label_anadir_vehiculo" name="label_anadir_vehiculo" value="<?php echo isset($_GET['label_anadir_vehiculo']) ? $_GET['label_anadir_vehiculo'] : ''; ?>" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="label_tipo_vehiculo">Label tipo vehiculo:</label><br>
+                                <input type="text" class="form-control" id="label_tipo_vehiculo" name="label_tipo_vehiculo" value="<?php echo isset($_GET['label_tipo_vehiculo']) ? $_GET['label_tipo_vehiculo'] : ''; ?>" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="label_marca">Label marca:</label><br>
+                                <input type="text" class="form-control" id="label_marca" name="label_marca" value="<?php echo isset($_GET['label_marca']) ? $_GET['label_marca'] : ''; ?>" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="label_modelo">Label modelo:</label><br>
+                                <input type="text" class="form-control" id="label_modelo" name="label_modelo" value="<?php echo isset($_GET['label_modelo']) ? $_GET['label_modelo'] : ''; ?>" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="label_aceptar">Label aceptar:</label><br>
+                                <input type="text" class="form-control" id="label_aceptar" name="label_aceptar" value="<?php echo isset($_GET['label_aceptar']) ? $_GET['label_aceptar'] : ''; ?>" required>
                             </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
@@ -308,19 +301,14 @@ function getTextoByIdioma($idIdioma, $textos)
                                                 'idioma_id' => $texto->idioma_id,
                                                 'label_solo_ida' => $texto->label_solo_ida,
                                                 'label_ida_y_vuelta' => $texto->label_ida_y_vuelta,
-                                                'label_trayecto' => $texto->label_trayecto,
-                                                'label_fecha_viaje' => $texto->label_fecha_viaje,
                                                 'label_pasajeros' => $texto->label_pasajeros,
-                                                'label_codigo_promocion' => $texto->label_codigo_promocion,
                                                 'label_adultos' => $texto->label_adultos,
                                                 'label_ninos' => $texto->label_ninos,
                                                 'label_seniors' => $texto->label_seniors,
                                                 'label_bebes' => $texto->label_bebes,
-                                                'label_descuentos' => $texto->label_descuentos,
-                                                'label_sin_descuentos' => $texto->label_sin_descuentos,
+                                                'label_familia' => $texto->label_familia,
                                                 'label_fn_general' => $texto->label_fn_general,
                                                 'label_fn_especial' => $texto->label_fn_especial,
-                                                'label_anos' => $texto->label_anos,
                                                 'label_reservar' => $texto->label_reservar,
                                                 'label_edad_adultos' => $texto->label_edad_adultos,
                                                 'label_edad_ninos' => $texto->label_edad_ninos,
@@ -328,6 +316,10 @@ function getTextoByIdioma($idIdioma, $textos)
                                                 'label_edad_bebes' => $texto->label_edad_bebes,
                                                 'label_mascotas' => $texto->label_mascotas,
                                                 'label_anadir_vehiculo' => $texto->label_anadir_vehiculo,
+                                                'label_tipo_vehiculo' => $texto->label_tipo_vehiculo,
+                                                'label_marca' => $texto->label_marca,
+                                                'label_modelo' => $texto->label_modelo,
+                                                'label_aceptar' => $texto->label_aceptar,
                                             ),
                                             $page_url
                                         ));

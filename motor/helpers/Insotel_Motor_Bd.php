@@ -25,35 +25,35 @@ class Insotel_Motor_Bd
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count === 0 || $count === "0") {
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma' => 'ES',
-                )
-            );
+        // if ($count === 0 || $count === "0") {
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma' => 'ES',
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma' => 'EN',
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma' => 'EN',
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma' => 'IT',
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma' => 'IT',
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma' => 'CA',
-                )
-            );
-        }
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma' => 'CA',
+        //         )
+        //     );
+        // }
     }
 
     public function create_table_insotel_motor_textos($wpdb)
@@ -68,19 +68,14 @@ class Insotel_Motor_Bd
                 idioma_id mediumint(9) NOT NULL,
                 label_solo_ida varchar(100) NOT NULL,
                 label_ida_y_vuelta varchar(100) NOT NULL,
-                label_trayecto varchar(100) NOT NULL,
-                label_fecha_viaje varchar(100) NOT NULL,
                 label_pasajeros varchar(100) NOT NULL,
-                label_codigo_promocion varchar(100) NOT NULL,
                 label_adultos varchar(100) NOT NULL,
                 label_ninos varchar(100) NOT NULL,
                 label_seniors varchar(100) NOT NULL,
                 label_bebes varchar(100) NOT NULL,
-                label_descuentos varchar(100) NOT NULL,
-                label_sin_descuentos varchar(100) NOT NULL,
+                label_familia varchar(200) NOT NULL,
                 label_fn_general varchar(200) NOT NULL,
                 label_fn_especial varchar(200) NOT NULL,
-                label_anos varchar(100) NOT NULL,
                 label_reservar varchar(100) NOT NULL,
                 label_edad_adultos varchar(100) NOT NULL,
                 label_edad_ninos varchar(100) NOT NULL,
@@ -88,8 +83,10 @@ class Insotel_Motor_Bd
                 label_edad_bebes varchar(100) NOT NULL, 
                 label_mascotas varchar(200) NOT NULL,
                 label_anadir_vehiculo varchar(200) NOT NULL,
-                ruta_ida varchar(200) NOT NULL,
-                ruta_vuelta varchar(200) NOT NULL,
+                label_tipo_vehiculo varchar(200) NOT NULL,
+                label_marca varchar(200) NOT NULL,
+                label_modelo varchar(200) NOT NULL,
+                label_aceptar varchar(200) NOT NULL,
                 PRIMARY KEY  (id),
                 FOREIGN KEY (idioma_id) REFERENCES $idiomasTable(id) ON DELETE CASCADE
                 ) $charset_collate;";
@@ -103,131 +100,119 @@ class Insotel_Motor_Bd
             "SELECT COUNT(*) FROM $nameTable"
         ));
 
-        if ($count == 0) {
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma_id' => 1, // ES
-                    'label_solo_ida' => 'Sólo ida',
-                    'label_ida_y_vuelta' => 'Ida y vuelta',
-                    'label_trayecto' => 'Trayecto',
-                    'label_fecha_viaje' => 'Fecha de viaje',
-                    'label_pasajeros' => 'Pasajero(s)',
-                    'label_codigo_promocion' => 'Código promoción',
-                    'label_adultos' => 'Adultos',
-                    'label_ninos' => 'Niños',
-                    'label_seniors' => 'Seniors',
-                    'label_bebes' => 'Bebés',
-                    'label_descuentos' => 'Descuentos',
-                    'label_sin_descuentos' => 'No tengo descuentos',
-                    'label_fn_general' => 'Fam. Num. General',
-                    'label_fn_especial' => 'Fam. Num. Especial',
-                    'label_anos' => 'años',
-                    'label_reservar' => 'Reservar',
-                    'label_edad_adultos' => '14-59 años',
-                    'label_edad_ninos' => '4-13 años',
-                    'label_edad_seniors' => '+59 años',
-                    'label_edad_bebes' => '0-3 años',
-                    'label_mascotas' => 'Animales de compañia',
-                    'label_anadir_vehiculo' => 'Añadir vehículo (operado por Trasmapi)',
-                    'ruta_ida' => 'Ibiza',
-                    'ruta_vuelta' => 'Formentera'
-                )
-            );
+        // if ($count == 0) {
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma_id' => 1, // ES
+        //             'label_solo_ida' => 'Sólo ida',
+        //             'label_ida_y_vuelta' => 'Ida y vuelta',
+        //             'label_pasajeros' => 'Pasajero(s)',
+        //             'label_adultos' => 'Adultos',
+        //             'label_ninos' => 'Niños',
+        //             'label_seniors' => 'Seniors',
+        //             'label_bebes' => 'Bebés',
+        //             'label_familia' => "Familia Numerosa",
+        //             'label_fn_general' => 'Reg. General',
+        //             'label_fn_especial' => 'Reg. Especial',
+        //             'label_reservar' => 'Reservar',
+        //             'label_edad_adultos' => '14-59 años',
+        //             'label_edad_ninos' => '4-13 años',
+        //             'label_edad_seniors' => '+59 años',
+        //             'label_edad_bebes' => '0-3 años',
+        //             'label_mascotas' => 'Animales de compañia',
+        //             'label_anadir_vehiculo' => 'Añadir vehículo (operado por Trasmapi)',
+        //             'label_tipo_vehiculo' => 'Tipo vehículo',
+        //             'label_marca' => 'Marca',
+        //             'label_modelo' => 'Modelo',
+        //             'label_aceptar' => 'Aceptar',
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma_id' => 2, // EN
-                    'label_solo_ida' => 'One way',
-                    'label_ida_y_vuelta' => 'Return',
-                    'label_trayecto' => 'Route',
-                    'label_fecha_viaje' => 'Travel date',
-                    'label_pasajeros' => 'Passenger(s)',
-                    'label_codigo_promocion' => 'Promo code',
-                    'label_adultos' => 'Adults',
-                    'label_ninos' => 'Children',
-                    'label_seniors' => 'Seniors',
-                    'label_bebes' => 'Babies',
-                    'label_descuentos' => 'Discounts',
-                    'label_sin_descuentos' => "I don't have discounts",
-                    'label_fn_general' => 'Fam. Num. General',
-                    'label_fn_especial' => 'Fam. Num. Especial',
-                    'label_anos' => 'years',
-                    'label_reservar' => 'Book now',
-                    'label_edad_adultos' => '14-59 years',
-                    'label_edad_ninos' => '4-13 years',
-                    'label_edad_seniors' => '+59 years',
-                    'label_edad_bebes' => '0-3 years',
-                    'label_mascotas' => 'Pets',
-                    'label_anadir_vehiculo' => 'Add a vehicle (operated by Trasmapi)',
-                    'ruta_ida' => 'Ibiza',
-                    'ruta_vuelta' => 'Formentera'
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma_id' => 2, // EN
+        //             'label_solo_ida' => 'One way',
+        //             'label_ida_y_vuelta' => 'Return',
+        //             'label_pasajeros' => 'Passenger(s)',
+        //             'label_adultos' => 'Adults',
+        //             'label_ninos' => 'Children',
+        //             'label_seniors' => 'Seniors',
+        //             'label_bebes' => 'Babies',
+        //             'label_familia' => "Large Family",
+        //             'label_fn_general' => 'Reg. General',
+        //             'label_fn_especial' => 'Reg. Especial',
+        //             'label_reservar' => 'Book now',
+        //             'label_edad_adultos' => '14-59 years',
+        //             'label_edad_ninos' => '4-13 years',
+        //             'label_edad_seniors' => '+59 years',
+        //             'label_edad_bebes' => '0-3 years',
+        //             'label_mascotas' => 'Pets',
+        //             'label_anadir_vehiculo' => 'Add a vehicle (operated by Trasmapi)',
+        //             'label_tipo_vehiculo' => 'Vehicle type',
+        //             'label_marca' => 'Brand',
+        //             'label_modelo' => 'Model',
+        //             'label_aceptar' => 'Accept',
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma_id' => 3, // IT
-                    'label_solo_ida' => 'Solo andata',
-                    'label_ida_y_vuelta' => 'Andata e ritorno',
-                    'label_trayecto' => 'Tratta',
-                    'label_fecha_viaje' => 'Data',
-                    'label_pasajeros' => 'Passeggeri',
-                    'label_codigo_promocion' => 'Codice promozionale',
-                    'label_adultos' => 'Adulti',
-                    'label_ninos' => 'Bambini',
-                    'label_seniors' => 'Seniors',
-                    'label_bebes' => 'Neonati',
-                    'label_descuentos' => 'Sconto',
-                    'label_sin_descuentos' => "Nessuno sconto",
-                    'label_fn_general' => 'Fam. Num. Generale',
-                    'label_fn_especial' => 'Fam. Num. Speciale',
-                    'label_anos' => 'anni',
-                    'label_reservar' => 'Cerca',
-                    'label_edad_adultos' => '14-59 anni',
-                    'label_edad_ninos' => '4-13 anni',
-                    'label_edad_seniors' => '+59 anni',
-                    'label_edad_bebes' => '0-3 anni',
-                    'label_mascotas' => 'Animali domestici',
-                    'label_anadir_vehiculo' => 'Viaggia con il veicolo (gestito da Trasmapi)',
-                    'ruta_ida' => 'Ibiza',
-                    'ruta_vuelta' => 'Formentera'
-                )
-            );
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma_id' => 3, // IT
+        //             'label_solo_ida' => 'Solo andata',
+        //             'label_ida_y_vuelta' => 'Andata e ritorno',
+        //             'label_pasajeros' => 'Passeggeri',
+        //             'label_adultos' => 'Adulti',
+        //             'label_ninos' => 'Bambini',
+        //             'label_seniors' => 'Seniors',
+        //             'label_bebes' => 'Neonati',
+        //             'label_familia' => "Famiglia numerosa",
+        //             'label_fn_general' => 'Reg. Generale',
+        //             'label_fn_especial' => 'Reg. Speciale',
+        //             'label_reservar' => 'Cerca',
+        //             'label_edad_adultos' => '14-59 anni',
+        //             'label_edad_ninos' => '4-13 anni',
+        //             'label_edad_seniors' => '+59 anni',
+        //             'label_edad_bebes' => '0-3 anni',
+        //             'label_mascotas' => 'Animali domestici',
+        //             'label_anadir_vehiculo' => 'Viaggia con il veicolo (gestito da Trasmapi)',
+        //             'label_tipo_vehiculo' => 'Tipo di veicolo',
+        //             'label_marca' => 'Marca',
+        //             'label_modelo' => 'Modelo',
+        //             'label_aceptar' => 'Accettare',
+        //         )
+        //     );
 
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'idioma_id' => 4, // CA
-                    'label_solo_ida' => 'Només anada',
-                    'label_ida_y_vuelta' => 'Anada i tornada',
-                    'label_trayecto' => 'Trajecte',
-                    'label_fecha_viaje' => 'Data de viatge',
-                    'label_pasajeros' => 'Passatger(s)',
-                    'label_codigo_promocion' => 'Codi de promoció',
-                    'label_adultos' => 'Adults',
-                    'label_ninos' => 'Nens',
-                    'label_seniors' => 'Sèniors',
-                    'label_bebes' => 'Nadons',
-                    'label_descuentos' => 'Descomptes',
-                    'label_sin_descuentos' => 'No tinc descomptes',
-                    'label_fn_general' => 'Fam. Num. General',
-                    'label_fn_especial' => 'Fam. Num. Especial',
-                    'label_anos' => 'anys',
-                    'label_reservar' => 'Reserva ara',
-                    'label_edad_adultos' => '14-59 anys',
-                    'label_edad_ninos' => '4-13 anys',
-                    'label_edad_seniors' => '+59 anys',
-                    'label_edad_bebes' => '0-3 anys',
-                    'label_mascotas' => 'Animals de companyia',
-                    'label_anadir_vehiculo' => "Viatjo amb vehicle (opera't per Trasmapi)",
-                    'ruta_ida' => 'Ibiza',
-                    'ruta_vuelta' => 'Formentera'
-                )
-            );
-        }
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'idioma_id' => 4, // CA
+        //             'label_solo_ida' => 'Només anada',
+        //             'label_ida_y_vuelta' => 'Anada i tornada',
+        //             'label_pasajeros' => 'Passatger(s)',
+        //             'label_adultos' => 'Adults',
+        //             'label_ninos' => 'Nens',
+        //             'label_seniors' => 'Sèniors',
+        //             'label_bebes' => 'Nadons',
+        //             'label_familia' => "Família Nombrosa",
+        //             'label_fn_general' => 'Reg. General',
+        //             'label_fn_especial' => 'Reg. Especial',
+        //             'label_reservar' => 'Reserva ara',
+        //             'label_edad_adultos' => '14-59 anys',
+        //             'label_edad_ninos' => '4-13 anys',
+        //             'label_edad_seniors' => '+59 anys',
+        //             'label_edad_bebes' => '0-3 anys',
+        //             'label_mascotas' => 'Animals de companyia',
+        //             'label_anadir_vehiculo' => "Viatjo amb vehicle (opera't per Trasmapi)",
+        //             'label_tipo_vehiculo' => 'Tipus vehicle',
+        //             'label_marca' => 'Marca',
+        //             'label_modelo' => 'Model',
+        //             'label_aceptar' => 'Acceptar',
+        //         )
+        //     );
+        // }
     }
 
     public function create_table_insotel_motor_constantes($wpdb)
@@ -254,19 +239,19 @@ class Insotel_Motor_Bd
         ));
 
 
-        if ($count == 0) {
-            $wpdb->insert(
-                $nameTable,
-                array(
-                    'promocion' => '',
-                    'url_motor' => 'https://booking.formenteralines.com/',
-                    'origen' => 'https://formenteralines.dev/',
-                    'canal_reserva' => 'https://formenteralines.dev/',
-                    'is_promocion' => true
+        // if ($count == 0) {
+        //     $wpdb->insert(
+        //         $nameTable,
+        //         array(
+        //             'promocion' => '',
+        //             'url_motor' => 'https://booking.formenteralines.com/',
+        //             'origen' => 'https://formenteralines.dev/',
+        //             'canal_reserva' => 'https://formenteralines.dev/',
+        //             'is_promocion' => true
 
-                )
-            );
-        }
+        //         )
+        //     );
+        // }
     }
 
     public function create_table_insotel_motor_puertos($wpdb)
