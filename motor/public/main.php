@@ -1,4 +1,6 @@
 <?php
+global $wpdb;
+$Insotel_Motor_Functions = new Insotel_Motor_Functions;
 
 $id_servicio = "0";
 $tipo_servicio = "";
@@ -6,15 +8,22 @@ $mostrar_vehiculo = true;
 $solo_una_fecha = false;
 $tipo_viaje = "seleccionable";
 $solo_adultos = false;
+$dias_deshabilitados = "";
+$dias_mes_deshabilitados = "";
+$dias_semana_deshabilitados = "";
+$id_puerto_inicial = 0;
 
 if (isset($atts)) {
-
     $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
+    $id_puerto_inicial = isset($atts['id_puerto_inicial']) ? intval($atts['id_puerto_inicial']) : 0;
     $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
     $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : true;
     $solo_una_fecha = isset($atts['solo_una_fecha']) ? filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN) : false;
     $tipo_viaje = isset($atts['tipo_viaje']) ? $atts['tipo_viaje'] : "seleccionable";
     $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
+    $dias_deshabilitados = isset($atts['dias_deshabilitados']) ? $Insotel_Motor_Functions->getArrayDays($atts['dias_deshabilitados']) : "";
+    $dias_mes_deshabilitados = isset($atts['dias_mes_deshabilitados']) ? $Insotel_Motor_Functions->getArrayDays($atts['dias_mes_deshabilitados']) : "";
+    $dias_semana_deshabilitados = isset($atts['dias_semana_deshabilitados']) ? $Insotel_Motor_Functions->transformDayWeekInIndex($Insotel_Motor_Functions->getArrayDays($atts['dias_semana_deshabilitados'])) : "";
 }
 
 
@@ -38,19 +47,38 @@ $solo_una_fecha_js = $solo_una_fecha ? 'true' : 'false';
 if ($tipo_viaje == "ida") {
     $solo_una_fecha_js = true;
 }
-global $wpdb;
+
 $queryIdiomas = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_idiomas");
 $idiomas = $wpdb->get_results($queryIdiomas, ARRAY_A);
 
-$Insotel_Motor_Functions = new Insotel_Motor_Functions;
+
 $optionsMarcasCoche = $Insotel_Motor_Functions->getOptionsMarca();
 $idioma = $Insotel_Motor_Functions->check_language_in_url($idiomas);
+
 $optionsModelosCoche = $Insotel_Motor_Functions->rellenarOptionsModelo("");
 
-$idIdioma = 1;
+$idIdioma = $idiomas[0]["id"];
+
+foreach ($idiomas as $idiomaComprove) {
+    if ($idiomaComprove["idioma_por_defecto"]) {
+        $idIdioma = $idiomaComprove["id"];
+    }
+}
+
 foreach ($idiomas as $idiomaComprove) {
     if (strtolower($idiomaComprove["idioma"]) == strtolower($idioma)) {
         $idIdioma = $idiomaComprove["id"];
+        $idioma = $idiomaComprove["idioma"];
+    }
+}
+
+if ($idioma == "") {
+    foreach ($idiomas as $idiomaComprove) {
+
+        if ($idiomaComprove["id"] == $idIdioma) {
+            $idIdioma = $idiomaComprove["id"];
+            $idioma = $idiomaComprove["idioma"];
+        }
     }
 }
 
@@ -71,6 +99,9 @@ $rutas = $wpdb->get_results($queryRutas);
 $queryPuertos = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}insotel_motor_puertos ORDER BY orden");
 $puertos = $wpdb->get_results($queryPuertos);
 
+$puertos = $Insotel_Motor_Functions->cambiarPuertoInicial($id_puerto_inicial, $puertos);
+
+
 
 // PARTIR PRIMER DIA ACTIVO
 $dia = substr(date("d-m-Y"), 0, 2);
@@ -83,8 +114,13 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 <script>
     if (window.innerWidth >= 980) {
         document.addEventListener("DOMContentLoaded", () => {
+            document.addEventListener("click", () => {
+                $("#booking-form #divocupacion").slideUp();
+            });
+
             console.log("ENTRA EN ESCRITORIO");
             const idioma = "<?php echo $idioma ?>";
+            console.log("IDIOMA:", idioma);
             const urlMotor = "<?php echo $constantes->url_motor ?>";
             const promocion = "<?php echo $constantes->promocion ?>";
 
@@ -98,6 +134,12 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 
             const rutas = <?php echo json_encode($rutas) ?>;
             const puertos = <?php echo json_encode($puertos) ?>;
+
+
+            const disabledDaysOfWeek = <?php echo json_encode($dias_semana_deshabilitados) ?>;
+            const disabledDaysMonth = <?php echo json_encode($dias_mes_deshabilitados) ?>;
+            const disabledDaysOfYear = <?php echo json_encode($dias_deshabilitados) ?>;
+
 
             const dateGeneral = {
                 linkedCalendars: true,
@@ -113,8 +155,8 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 
             setRutasValueInSelect("origen", "destino", puertos, rutas);
 
-            let dateIdioma = paramsByDatepicker(idioma, dateActually);
-            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+            let dateIdioma = paramsByDatepicker(idioma, dateActually, disabledDaysOfWeek, disabledDaysMonth, disabledDaysOfYear);
+            loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, "#divocupacion");
             updateDate();
 
             let adultos = 1;
@@ -126,7 +168,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 
             /*Cuando cambiar entre ida o ida y vuelta*/
             $("#booking-form #idavue").change(function() {
-                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, "#divocupacion");
             });
 
             /*Cuando clicka en el boton de aceptar en el dropdown de pasajeros para que se cierre*/
@@ -166,7 +208,9 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
                     selectDestino.appendChild(option);
                 });
 
-                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, "#divocupacion");
+
+                document.querySelector("#fecha-viaje").click();
             });
 
             if (document.querySelector("#booking-form #vehiculo") != undefined) {
@@ -220,7 +264,8 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 
             /*Cuando cambia el destino*/
             $("#booking-form #destino").change(function() {
-                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje);
+                loadDatePicker(dateGeneral, dateFechas, dateIdioma, solo_una_fecha, tipo_viaje, "#divocupacion");
+                document.querySelector("#fecha-viaje").click();
             });
 
             /*LISTENERS PASAEJROS */
@@ -466,7 +511,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
                         document.querySelector(
                             "#booking-form #fechaini"
                         ).value = `${diaini}-${mesini}-${anoini}`;
-                        
+
                         console.log(tipo_viaje);
 
                         if (tipo_viaje === "seleccionable") {
@@ -518,6 +563,8 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
                         document.querySelector("#booking-form").submit();
                     }
                 });
+
+
         });
     }
 </script>
@@ -650,7 +697,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
         <div id="divocupacion">
 
             <div class="pasajero">
-                <div class="texto"><?= $textosTraducidos["label_adultos"] ?><br><span><?= $textosTraducidos["label_edad_adultos"] ?></span></div>
+                <div class="texto"><?= $textosTraducidos["label_adultos"] ?><br><span><?= $constantes->edad_adulto . " " . $textosTraducidos["label_anos"] ?></span></div>
                 <div class="menos" id="ad_me">
                     <svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
                         <g fill="currentColor">
@@ -676,7 +723,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
             if ($tipo_pasajero != "adultos") {
             ?>
                 <div class="pasajero">
-                    <div class="texto"><?= $textosTraducidos["label_ninos"] ?><br><span><?= $textosTraducidos["label_edad_ninos"] ?></span></div>
+                    <div class="texto"><?= $textosTraducidos["label_ninos"] ?><br><span><?= $constantes->edad_nino . " " . $textosTraducidos["label_anos"] ?></span></div>
                     <div class="menos" id="ni_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
                             <g fill="currentColor">
                                 <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
@@ -699,7 +746,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
 
 
             <div class="pasajero">
-                <div class="texto"><?= $textosTraducidos["label_seniors"] ?><br><span><?= $textosTraducidos["label_edad_seniors"] ?></span></div>
+                <div class="texto"><?= $textosTraducidos["label_seniors"] ?><br><span><?= $constantes->edad_senior . " " . $textosTraducidos["label_anos"] ?></span></div>
                 <div class="menos" id="se_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
                         <g fill="currentColor">
                             <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>
@@ -722,7 +769,7 @@ $primerdia = $dia . "/" . $mes . "/" . $ano;
             if ($tipo_pasajero != "adulto") {
             ?>
                 <div class="pasajero">
-                    <div class="texto"><?= $textosTraducidos["label_bebes"] ?><br><span><?= $textosTraducidos["label_edad_bebes"] ?></span></div>
+                    <div class="texto"><?= $textosTraducidos["label_bebes"] ?><br><span><?= $constantes->edad_bebes . " " . $textosTraducidos["label_anos"] ?></span></div>
                     <div class="menos" id="be_me"><svg viewBox="-8 0 48 48" xmlns="http://www.w3.org/2000/svg">
                             <g fill="currentColor">
                                 <path d="M16 32c8.837 0 16-7.163 16-16S24.837 0 16 0 0 7.163 0 16s7.163 16 16 16zm0-2C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z"></path>

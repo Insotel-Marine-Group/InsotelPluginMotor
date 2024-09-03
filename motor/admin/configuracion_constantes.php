@@ -16,8 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $origen = sanitize_text_field($_POST['origen']);
     $canal_reserva = sanitize_text_field($_POST['canal_reserva']);
     $is_promocion = $_POST['is_promocion'] === "on" ? true : false;
+    $canal_reserva = sanitize_text_field($_POST['canal_reserva']);
+    $edad_adulto = sanitize_text_field($_POST['edad_adulto']);
+    $edad_nino = sanitize_text_field($_POST['edad_nino']);
+    $edad_senior = sanitize_text_field($_POST['edad_senior']);
+    $edad_bebes = sanitize_text_field($_POST['edad_bebes']);
 
-    
     // Actualizar la tabla
     
 
@@ -35,7 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 'promocion' => $promocion,
                 'canal_reserva' => $canal_reserva,
                 'origen' => $origen,
-                'is_promocion' => $is_promocion
+                'is_promocion' => $is_promocion,
+                'edad_adulto' => $edad_adulto,
+                'edad_nino' => $edad_nino,
+                'edad_senior' => $edad_senior,
+                'edad_bebes' => $edad_bebes
             )
         );
 
@@ -56,7 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                 'promocion' => $promocion,
                 'canal_reserva' => $canal_reserva,
                 'origen' => $origen,
-                'is_promocion' => $is_promocion
+                'is_promocion' => $is_promocion,
+                'edad_adulto' => $edad_adulto,
+                'edad_nino' => $edad_nino,
+                'edad_senior' => $edad_senior,
+                'edad_bebes' => $edad_bebes
             ),
             array('id' => "1")
         );
@@ -119,6 +131,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     <div class="col-sm-6">
                         <label for="canal_reserva">Canal reserva:</label><br>
                         <input type="text" class="form-control" id="canal_reserva" name="canal_reserva" value="<?php echo $constantes->canal_reserva ?>">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="edad_adulto">Edad Adulto:</label><br>
+                        <input type="text" class="form-control" id="edad_adulto" name="edad_adulto" value="<?php echo $constantes->edad_adulto ?>">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="edad_nino">Edad Nino:</label><br>
+                        <input type="text" class="form-control" id="edad_nino" name="edad_nino" value="<?php echo $constantes->edad_nino ?>">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="edad_senior">Edad Senior:</label><br>
+                        <input type="text" class="form-control" id="edad_senior" name="edad_senior" value="<?php echo $constantes->edad_senior ?>">
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="edad_bebes">Edad Bebes:</label><br>
+                        <input type="text" class="form-control" id="edad_bebes" name="edad_bebes" value="<?php echo $constantes->edad_bebes ?>">
                     </div>
                 </div>
                 <button id="boton_guardar" name="update_table" type="submit" class="btn btn-success float-end mt-2">Guardar Cambios</button>

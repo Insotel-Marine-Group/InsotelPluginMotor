@@ -14,17 +14,20 @@
         <div class="container text-bg-light p-5 shadow w-100 h-100">
             <div class="row">
                 <div class="col">
-
                     <div class="w-100 border-1">SHORTCODES</div>
                     <div class="w-100 border-1">[ insotel_motor ]</div>
-
+                    <div class="w-100 border-1">[ insotel_motor_movil ] (para móvil es igual solo habrá que poner el _movil a insotel_motor)</div>
                     <div class="w-100 border-1">PARAMETROS DE SHORTCODES</div>
                     <div class="w-100 border-1">id_servicio Ex:[insotel_motor id_servicio="1006"]</div>
                     <div class="w-100 border-1">tipo_servicio Ex:[insotel_motor tipo_servicio="EXPERIENCIAS"]</div>
                     <div class="w-100 border-1">mostrar_vehiculo Ex:[insotel_motor mostrar_vehiculo="true"]</div>
+                    <div class="w-100 border-1">id_puerto_inicial Ex:[insotel_motor id_puerto_inicial="1"]</div>
                     <div class="w-100 border-1">solo_una_fecha Ex:[insotel_motor solo_una_fecha="true"]</div>
                     <div class="w-100 border-1">solo_adultos Ex:[insotel_motor solo_adultos="true"]</div>
                     <div class="w-100 border-1">tipo_viaje Ex:[insotel_motor tipo_viaje="seleccionable"], [insotel_motor tipo_viaje="ida"], [insotel_motor tipo_viaje="vuelta"]</div>
+                    <div class="w-100 border-1">dias_deshabilitados Ex:[insotel_motor dias_deshabilitados="26/08/2024, 27/08/2024"] vale cualquier fecha</div>
+                    <div class="w-100 border-1">dias_mes_deshabilitados Ex:[insotel_motor dias_mes_deshabilitados="1, 2, 3, 4, 5, 6"] hasta el 31</div>
+                    <div class="w-100 border-1">dias_semana_deshabilitados Ex:[insotel_motor dias_semana_deshabilitados="lun, mar, mie, jue, vie, sab, dom"] de lunes a domingo</div>
                 </div>
             </div>
         </div>

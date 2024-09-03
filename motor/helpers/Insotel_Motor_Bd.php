@@ -12,6 +12,7 @@ class Insotel_Motor_Bd
             $sql = "CREATE TABLE $nameTable (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 idioma varchar(5) NOT NULL,
+                idioma_por_defecto boolean NOT NULL,
                 PRIMARY KEY  (id),
                 UNIQUE (idioma)
                 ) $charset_collate;";
@@ -77,10 +78,11 @@ class Insotel_Motor_Bd
                 label_fn_general varchar(200) NOT NULL,
                 label_fn_especial varchar(200) NOT NULL,
                 label_reservar varchar(100) NOT NULL,
-                label_edad_adultos varchar(100) NOT NULL,
-                label_edad_ninos varchar(100) NOT NULL,
-                label_edad_seniors varchar(100) NOT NULL,
-                label_edad_bebes varchar(100) NOT NULL, 
+                label_anos varchar(100) NOT NULL,
+                -- label_edad_adultos varchar(100) NOT NULL,
+                -- label_edad_ninos varchar(100) NOT NULL,
+                -- label_edad_seniors varchar(100) NOT NULL,
+                -- label_edad_bebes varchar(100) NOT NULL, 
                 label_mascotas varchar(200) NOT NULL,
                 label_anadir_vehiculo varchar(200) NOT NULL,
                 label_tipo_vehiculo varchar(200) NOT NULL,
@@ -227,6 +229,10 @@ class Insotel_Motor_Bd
             origen varchar(50) NOT NULL,
             canal_reserva varchar(50) NOT NULL,
             url_motor varchar(300) NOT NULL,
+            edad_adulto varchar(20) NOT NULL,
+            edad_nino varchar(20) NOT NULL,
+            edad_senior varchar(20) NOT NULL,
+            edad_bebes varchar(20) NOT NULL,
             PRIMARY KEY  (id)) $charset_collate;";
             dbDelta($sql);
         }
@@ -239,19 +245,22 @@ class Insotel_Motor_Bd
         ));
 
 
-        // if ($count == 0) {
-        //     $wpdb->insert(
-        //         $nameTable,
-        //         array(
-        //             'promocion' => '',
-        //             'url_motor' => 'https://booking.formenteralines.com/',
-        //             'origen' => 'https://formenteralines.dev/',
-        //             'canal_reserva' => 'https://formenteralines.dev/',
-        //             'is_promocion' => true
-
-        //         )
-        //     );
-        // }
+        if ($count == 0) {
+            $wpdb->insert(
+                $nameTable,
+                array(
+                    'promocion' => '',
+                    'url_motor' => '',
+                    'origen' => '',
+                    'canal_reserva' => '',
+                    'is_promocion' => true,
+                    'edad_adulto' => '14-59',
+                    'edad_nino' => '4-13',
+                    'edad_senior' => '59',
+                    'edad_bebes' => '0-3',
+                )
+            );
+        }
     }
 
     public function create_table_insotel_motor_puertos($wpdb)

@@ -59,9 +59,14 @@ function setRutasValueInSelect(idOrigen, idDestino, puertos, rutas) {
   });
 }
 
-function paramsByDatepicker(lang, dateActually) {
+function paramsByDatepicker(
+  lang,
+  dateActually,
+  disabledDaysWeek,
+  disabledDaysMonth,
+  disabledDaysYear
+) {
   let datas = {};
-
   if (lang == "EN") {
     datas = {
       minDate: dateActually,
@@ -90,6 +95,33 @@ function paramsByDatepicker(lang, dateActually) {
           "December",
         ],
         firstDay: 0,
+      },
+      isInvalidDate: function (date) {
+        let dateReturn = false;
+        if (disabledDaysWeek.length > 0) {
+          disabledDaysWeek.forEach((day) => {
+            if (date.day() == day) {
+              dateReturn = true;
+            }
+          });
+        }
+
+        if (disabledDaysYear.length > 0) {
+          if (disabledDaysYear.includes(date.format("DD/MM/YYYY"))) {
+            dateReturn = true;
+          }
+        }
+
+        if (disabledDaysMonth.length > 0) {
+          const dayOfMonth = date.date();
+          disabledDaysMonth.forEach((day) => {
+            if (dayOfMonth == day) {
+              dateReturn = true;
+            }
+          });
+        }
+
+        return dateReturn;
       },
     };
   } else {
@@ -121,6 +153,34 @@ function paramsByDatepicker(lang, dateActually) {
         ],
         firstDay: 1,
       },
+      isInvalidDate: function (date) {
+        let dateReturn = false;
+        if (disabledDaysWeek.length > 0) {
+          disabledDaysWeek.forEach((day) => {
+            if (date.day() == day) {
+              dateReturn = true;
+            }
+          });
+        }
+
+        if (disabledDaysYear.length > 0) {
+          if (disabledDaysYear.includes(date.format("DD/MM/YYYY"))) {
+            dateReturn = true;
+          }
+        }
+
+
+        if (disabledDaysMonth.length > 0) {
+          const dayOfMonth = date.date();
+          disabledDaysMonth.forEach((day) => {
+            if (dayOfMonth == day) {
+              dateReturn = true;
+            }
+          });
+        }
+
+        return dateReturn;
+      },
     };
   }
 
@@ -142,7 +202,8 @@ function loadDatePicker(
   dateFechas,
   dateIdioma,
   solo_una_fecha,
-  tipo_viaje
+  tipo_viaje,
+  divPasajeros
 ) {
   var combinedConfig;
 
@@ -180,6 +241,7 @@ function loadDatePicker(
     combinedConfig,
     function (start, end, label) {
       // callback function
+      $(divPasajeros).slideDown();
     }
   );
 }

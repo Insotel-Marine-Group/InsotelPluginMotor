@@ -3,7 +3,7 @@
  * Plugin Name:       MOTOR INSOTEL MARINE GROUP
  * Plugin URI:        https://softme.es/
  * Description:       MOTOR INSOTEL MARINE GROUP desarrollado por SOFTME.
- * Version:           1.1.2
+ * Version:           1.1.7
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            SOFTME
@@ -19,6 +19,10 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 //Creacion opciones menu
 define('WPP_MOTOR_URL', plugin_dir_url(__FILE__));
@@ -41,14 +45,18 @@ add_shortcode('insotel_motor', 'insotel_motor_shortcode');
 
 function insotel_motor_shortcode($atts)
 {
-    
+
     $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
     $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
     $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : true;
     $solo_una_fecha = isset($atts['solo_una_fecha']) ? filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN) : false;
     $tipo_viaje = isset($atts['tipo_viaje']) ? $atts['tipo_viaje'] : "seleccionable";
     $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
-    
+    $dias_deshabilitados = isset($atts['dias_deshabilitados']) ? $atts['dias_deshabilitados'] : "";
+    $dias_mes_deshabilitados = isset($atts['dias_mes_deshabilitados']) ? $atts['dias_mes_deshabilitados'] : "";
+    $dias_semana_deshabilitados = isset($atts['dias_semana_deshabilitados']) ? $atts['dias_semana_deshabilitados'] : "";
+    $id_puerto_inicial = isset($atts['id_puerto_inicial']) ? $atts['id_puerto_inicial'] : "";
+
 
     $atts = shortcode_atts(
         array(
@@ -57,29 +65,60 @@ function insotel_motor_shortcode($atts)
             'mostrar_vehiculo' =>  $mostrar_vehiculo,
             'solo_una_fecha' =>  $solo_una_fecha,
             'tipo_viaje' =>  $tipo_viaje,
-            'solo_adultos' =>  $solo_adultos
+            'solo_adultos' =>  $solo_adultos,
+            'dias_deshabilitados' =>  $dias_deshabilitados,
+            'dias_mes_deshabilitados' =>  $dias_mes_deshabilitados,
+            'dias_semana_deshabilitados' =>  $dias_semana_deshabilitados,
+            'id_puerto_inicial' =>  $id_puerto_inicial
         ),
         $atts,
         'insotel_motor'
     );
 
     // Encolar los estilos y scripts necesarios
-    wp_enqueue_script('insotel_motor_jquery_js');
-    wp_enqueue_script('insotel_motor_moment_js');
 
-    wp_enqueue_style('insotel_motor_bootstrap_css');
-    wp_enqueue_script('insotel_motor_popper_js');
-    wp_enqueue_script('insotel_motor_bootstrap_js');
+    if (!wp_script_is('insotel_motor_jquery_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_jquery_js');
+    }
+
+    if (!wp_script_is('insotel_motor_moment_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_moment_js');
+    }
+
+    if (!wp_style_is('insotel_motor_bootstrap_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_bootstrap_css');
+    }
+
+    if (!wp_script_is('insotel_motor_popper_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_popper_js');
+    }
+
+    if (!wp_script_is('insotel_motor_bootstrap_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_bootstrap_js');
+    }
+
+    if (!wp_style_is('insotel_motor_font_awesome_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_font_awesome_css');
+    }
+
+    if (!wp_style_is('insotel_motor_main_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_main_css');
+    }
+
+    if (!wp_script_is('insotel_motor_main_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_main_js');
+    }
+
+    if (!wp_script_is('insotel_motor_daterangepicker_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_daterangepicker_js');
+    }
+
+    if (!wp_style_is('insotel_motor_daterangepicker_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_daterangepicker_css');
+    }
 
 
 
-    wp_enqueue_style('insotel_motor_font_awesome_css');
-    wp_enqueue_style('insotel_motor_main_css');
-    wp_enqueue_script('insotel_motor_main_js');
-    
-
-    wp_enqueue_script('insotel_motor_daterangepicker_js');
-    wp_enqueue_style('insotel_motor_daterangepicker_css');
 
     ob_start();
     include_once(WPP_MOTOR_PATH . '/helpers/Insotel_Motor_Functions.php');
@@ -94,14 +133,60 @@ add_shortcode('insotel_motor_movil', 'insotel_motor_shortcode_movil');
 
 function insotel_motor_shortcode_movil($atts)
 {
-    
+
     $id_servicio = isset($atts['id_servicio']) ? $atts['id_servicio'] : 0;
     $tipo_servicio = isset($atts['tipo_servicio']) ? $atts['tipo_servicio'] : "";
     $mostrar_vehiculo = isset($atts['mostrar_vehiculo']) ? filter_var($atts['mostrar_vehiculo'], FILTER_VALIDATE_BOOLEAN) : true;
     $solo_una_fecha = isset($atts['solo_una_fecha']) ? filter_var($atts['solo_una_fecha'], FILTER_VALIDATE_BOOLEAN) : false;
     $tipo_viaje = isset($atts['tipo_viaje']) ? $atts['tipo_viaje'] : "seleccionable";
     $solo_adultos = isset($atts['solo_adultos']) ? filter_var($atts['solo_adultos'], FILTER_VALIDATE_BOOLEAN) : false;
-    
+    $dias_deshabilitados = isset($atts['dias_deshabilitados']) ? $atts['dias_deshabilitados'] : "";
+    $dias_mes_deshabilitados = isset($atts['dias_mes_deshabilitados']) ? $atts['dias_mes_deshabilitados'] : "";
+    $dias_semana_deshabilitados = isset($atts['dias_semana_deshabilitados']) ? $atts['dias_semana_deshabilitados'] : "";
+    $id_puerto_inicial = isset($atts['id_puerto_inicial']) ? $atts['id_puerto_inicial'] : "";
+
+    // Encolar los estilos y scripts necesarios
+
+    if (!wp_script_is('insotel_motor_jquery_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_jquery_js');
+    }
+
+    if (!wp_script_is('insotel_motor_moment_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_moment_js');
+    }
+
+    if (!wp_style_is('insotel_motor_bootstrap_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_bootstrap_css');
+    }
+
+    if (!wp_script_is('insotel_motor_popper_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_popper_js');
+    }
+
+    if (!wp_script_is('insotel_motor_bootstrap_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_bootstrap_js');
+    }
+
+    if (!wp_style_is('insotel_motor_font_awesome_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_font_awesome_css');
+    }
+
+    if (!wp_style_is('insotel_motor_main_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_main_css');
+    }
+
+    if (!wp_script_is('insotel_motor_main_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_main_js');
+    }
+
+    if (!wp_script_is('insotel_motor_daterangepicker_js', 'enqueued')) {
+        wp_enqueue_script('insotel_motor_daterangepicker_js');
+    }
+
+    if (!wp_style_is('insotel_motor_daterangepicker_css', 'enqueued')) {
+        wp_enqueue_style('insotel_motor_daterangepicker_css');
+    }
+
 
     $atts = shortcode_atts(
         array(
@@ -110,7 +195,12 @@ function insotel_motor_shortcode_movil($atts)
             'mostrar_vehiculo' =>  $mostrar_vehiculo,
             'solo_una_fecha' =>  $solo_una_fecha,
             'tipo_viaje' =>  $tipo_viaje,
-            'solo_adultos' =>  $solo_adultos
+            'solo_adultos' =>  $solo_adultos,
+            'dias_deshabilitados' =>  $dias_deshabilitados,
+            'dias_mes_deshabilitados' =>  $dias_mes_deshabilitados,
+            'dias_semana_deshabilitados' =>  $dias_semana_deshabilitados,
+            'id_puerto_inicial' =>  $id_puerto_inicial
+
         ),
         $atts,
         'insotel_motor'
@@ -118,6 +208,7 @@ function insotel_motor_shortcode_movil($atts)
 
 
     ob_start();
+    include_once(WPP_MOTOR_PATH . '/helpers/Insotel_Motor_Functions.php');
     include_once(WPP_MOTOR_PATH . '/public_movil/main.php');
     $content = ob_get_contents();
     ob_end_clean();
@@ -229,5 +320,3 @@ function wp_learn_create_database_table_motor()
 }
 // Creamos la base da datos
 register_activation_hook(__FILE__, 'wp_learn_create_database_table_motor');
-
-

@@ -10,6 +10,7 @@ $table_textos = $wpdb->prefix . 'insotel_motor_textos';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $idioma = sanitize_text_field($_POST['idioma']);
     $idioma_id = $_POST['idioma_id'];
+    $idioma_por_defecto = $_POST['idioma_por_defecto'] === "on" ? true : false;;
 
     // Verificar si el idioma ya existe
     $existing_idioma = $wpdb->get_var($wpdb->prepare(
@@ -17,27 +18,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
         $idioma
     ));
 
+    
 
-    if ($existing_idioma === null) {
-        if ($idioma_id > 0) {
+    $actualizacion_idioma_por_defecto = true;
+
+    if ($idioma_por_defecto) {
+        $query = "UPDATE $table_idiomas SET idioma_por_defecto = %d";
+        $result = $wpdb->query($wpdb->prepare($query, false));
+        $message = $result !== false ? 'Actualizadas correctamente en todas las filas.' : 'Hubo un error al actualizar idioma_por_defecto en todas las filas.';
+        $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+        if ($result !== false){}else{
+            $actualizacion_idioma_por_defecto = false;
+        }
+    }
+    echo "Actualizacion de la filas: $actualizacion_idioma_por_defecto </br>";
+    echo "Existing Idioma: $existing_idioma </br>";
+
+    if ($actualizacion_idioma_por_defecto) {
+        if ($existing_idioma === null) {
+            if ($idioma_id > 0) {
+
+                $result = $wpdb->update(
+                    $table_idiomas,
+                    array(
+                        'idioma' => $idioma,
+                        'idioma_por_defecto' => $idioma_por_defecto
+                    ),
+                    array('id' => $idioma_id)
+                );
+
+                $message = $result !== false ? 'Idioma actualizado correctamente.' : 'Hubo un error al actualizar el idioma.';
+                $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+
+            } else {
+
+                $result = $wpdb->insert(
+                    $table_idiomas,
+                    array(
+                        'idioma' => $idioma,
+                        'idioma_por_defecto' => $idioma_por_defecto
+                    )
+                );
+                
+                $message = $result !== false ? 'Idioma insertado correctamente.' : 'Hubo un error al insertar el idioma.';
+                $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
+            }
+        } else {
+            // $message = 'El idioma ya existe.';
+            // $messageClass = 'alert-warning';
+
             $result = $wpdb->update(
                 $table_idiomas,
-                array('idioma' => $idioma),
+                array(
+                    'idioma' => $idioma,
+                    'idioma_por_defecto' => $idioma_por_defecto
+                ),
                 array('id' => $idioma_id)
             );
+
             $message = $result !== false ? 'Idioma actualizado correctamente.' : 'Hubo un error al actualizar el idioma.';
             $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
-        } else {
-            $result = $wpdb->insert(
-                $table_idiomas,
-                array('idioma' => $idioma)
-            );
-            $message = $result !== false ? 'Idioma insertado correctamente.' : 'Hubo un error al insertar el idioma.';
-            $messageClass = $result !== false ? 'alert-info' : 'alert-danger';
         }
-    } else {
-        $message = 'El idioma ya existe.';
-        $messageClass = 'alert-warning';
     }
 }
 
@@ -81,6 +122,22 @@ $idiomas = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}insotel_motor_idioma
                             <label for="idioma" class="form-label">Idioma:</label>
                             <input type="hidden" id="idioma_id" name="idioma_id" value="<?php echo isset($_GET['id']) ? intval($_GET['id']) : 0; ?>">
                             <input type="text" class="form-control" id="idioma" name="idioma" value="<?php echo isset($_GET['idioma']) ? sanitize_text_field($_GET['idioma']) : ''; ?>" required>
+                            <div class="">
+                                <label for="idioma_por_defecto">¿Es el idioma por defecto?</label><br>
+                                <?php
+                                if ($_GET['idioma_por_defecto']) {
+                                ?>
+                                    <input type="checkbox" class="form-control" id="idioma_por_defecto" name="idioma_por_defecto" checked>
+
+                                <?php
+                                } else {
+                                ?>
+                                    <input type="checkbox" class="form-control" id="idioma_por_defecto" name="idioma_por_defecto">
+
+                                <?php
+                                }
+                                ?>
+                            </div>
                         </div>
                         <div class="d-flex align-items-center justify-content-between">
                             <?php
@@ -106,6 +163,7 @@ $idiomas = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}insotel_motor_idioma
                             <tr>
                                 <th>ID</th>
                                 <th>Idioma</th>
+                                <th>¿Es el por defecto?</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -114,8 +172,9 @@ $idiomas = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}insotel_motor_idioma
                                 <tr>
                                     <td><?php echo $idioma->id; ?></td>
                                     <td><?php echo $idioma->idioma; ?></td>
+                                    <td><?php echo $idioma->idioma_por_defecto; ?></td>
                                     <td>
-                                        <a href="<?php echo esc_url(add_query_arg(array('id' => $idioma->id, 'idioma' => $idioma->idioma), $page_url)); ?>" class="btn btn-warning btn-sm">Editar</a>
+                                        <a href="<?php echo esc_url(add_query_arg(array('id' => $idioma->id, 'idioma' => $idioma->idioma, 'idioma_por_defecto' => $idioma->idioma_por_defecto), $page_url)); ?>" class="btn btn-warning btn-sm">Editar</a>
                                         <a href="<?php echo esc_url(add_query_arg(array('action' => 'delete', 'id' => $idioma->id), $page_url)); ?>" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas eliminar este idioma y todos los textos asociados?');">Eliminar</a>
                                     </td>
                                 </tr>

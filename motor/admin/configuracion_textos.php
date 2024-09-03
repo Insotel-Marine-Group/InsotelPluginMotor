@@ -21,10 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
     $label_fn_general = sanitize_text_field($_POST['label_fn_general']);
     $label_fn_especial = sanitize_text_field($_POST['label_fn_especial']);
     $label_reservar = sanitize_text_field($_POST['label_reservar']);
-    $label_edad_adultos = sanitize_text_field($_POST['label_edad_adultos']);
-    $label_edad_ninos = sanitize_text_field($_POST['label_edad_ninos']);
-    $label_edad_seniors = sanitize_text_field($_POST['label_edad_seniors']);
-    $label_edad_bebes = sanitize_text_field($_POST['label_edad_bebes']);
+    // $label_edad_adultos = sanitize_text_field($_POST['label_edad_adultos']);
+    // $label_edad_ninos = sanitize_text_field($_POST['label_edad_ninos']);
+    // $label_edad_seniors = sanitize_text_field($_POST['label_edad_seniors']);
+    // $label_edad_bebes = sanitize_text_field($_POST['label_edad_bebes']);
+    $label_anos = sanitize_text_field($_POST['label_anos']);
     $label_mascotas = sanitize_text_field($_POST['label_mascotas']);
     $label_anadir_vehiculo = sanitize_text_field($_POST['label_anadir_vehiculo']);
     $label_tipo_vehiculo = sanitize_text_field($_POST['label_tipo_vehiculo']);
@@ -55,10 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     'label_fn_general' => $label_fn_general,
                     'label_fn_especial' => $label_fn_especial,
                     'label_reservar' => $label_reservar,
-                    'label_edad_adultos' => $label_edad_adultos,
-                    'label_edad_ninos' => $label_edad_ninos,
-                    'label_edad_seniors' => $label_edad_seniors,
-                    'label_edad_bebes' => $label_edad_bebes,
+                    // 'label_edad_adultos' => $label_edad_adultos,
+                    // 'label_edad_ninos' => $label_edad_ninos,
+                    // 'label_edad_seniors' => $label_edad_seniors,
+                    // 'label_edad_bebes' => $label_edad_bebes,
+                    'label_anos' => $label_anos,
                     'label_mascotas' => $label_mascotas,
                     'label_anadir_vehiculo' => $label_anadir_vehiculo,
                     'label_tipo_vehiculo' => $label_tipo_vehiculo,
@@ -86,10 +88,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_table'])) {
                     'label_fn_general' => $label_fn_general,
                     'label_fn_especial' => $label_fn_especial,
                     'label_reservar' => $label_reservar,
-                    'label_edad_adultos' => $label_edad_adultos,
-                    'label_edad_ninos' => $label_edad_ninos,
-                    'label_edad_seniors' => $label_edad_seniors,
-                    'label_edad_bebes' => $label_edad_bebes,
+                    // 'label_edad_adultos' => $label_edad_adultos,
+                    // 'label_edad_ninos' => $label_edad_ninos,
+                    // 'label_edad_seniors' => $label_edad_seniors,
+                    // 'label_edad_bebes' => $label_edad_bebes,
+                    'label_anos' => $label_anos,
                     'label_mascotas' => $label_mascotas,
                     'label_anadir_vehiculo' => $label_anadir_vehiculo,
                     'label_tipo_vehiculo' => $label_tipo_vehiculo,
@@ -218,21 +221,25 @@ function getTextoByIdioma($idIdioma, $textos)
                                 <input type="text" class="form-control" id="label_reservar" name="label_reservar" value="<?php echo isset($_GET['label_reservar']) ? $_GET['label_reservar'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
+                                <label for="label_anos">Label años:</label><br>
+                                <input type="text" class="form-control" id="label_anos" name="label_anos" value="<?php echo isset($_GET['label_anos']) ? $_GET['label_anos'] : ''; ?>" required>
+                            </div>
+                            <!-- <div class="col-sm-6">
                                 <label for="label_edad_adultos">Label edad adultos:</label><br>
-                                <input type="text" class="form-control" id="label_edad_adultos" name="label_edad_adultos" value="<?php echo isset($_GET['label_edad_adultos']) ? $_GET['label_edad_adultos'] : ''; ?>" required>
+                                <input type="text" class="form-control" id="label_edad_adultos" name="label_edad_adultos" value="<?php //echo isset($_GET['label_edad_adultos']) ? $_GET['label_edad_adultos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_ninos">Label edad ninos:</label><br>
-                                <input type="text" class="form-control" id="label_edad_ninos" name="label_edad_ninos" value="<?php echo isset($_GET['label_edad_ninos']) ? $_GET['label_edad_ninos'] : ''; ?>" required>
+                                <input type="text" class="form-control" id="label_edad_ninos" name="label_edad_ninos" value="<?php //echo isset($_GET['label_edad_ninos']) ? $_GET['label_edad_ninos'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_seniors">Label edad seniors:</label><br>
-                                <input type="text" class="form-control" id="label_edad_seniors" name="label_edad_seniors" value="<?php echo isset($_GET['label_edad_seniors']) ? $_GET['label_edad_seniors'] : ''; ?>" required>
+                                <input type="text" class="form-control" id="label_edad_seniors" name="label_edad_seniors" value="<?php //echo isset($_GET['label_edad_seniors']) ? $_GET['label_edad_seniors'] : ''; ?>" required>
                             </div>
                             <div class="col-sm-6">
                                 <label for="label_edad_bebes">Label edad bebes:</label><br>
-                                <input type="text" class="form-control" id="label_edad_bebes" name="label_edad_bebes" value="<?php echo isset($_GET['label_edad_bebes']) ? $_GET['label_edad_bebes'] : ''; ?>" required>
-                            </div>
+                                <input type="text" class="form-control" id="label_edad_bebes" name="label_edad_bebes" value="<?php //echo isset($_GET['label_edad_bebes']) ? $_GET['label_edad_bebes'] : ''; ?>" required>
+                            </div> -->
                             <div class="col-sm-6">
                                 <label for="label_mascotas">Label mascotas:</label><br>
                                 <input type="text" class="form-control" id="label_mascotas" name="label_mascotas" value="<?php echo isset($_GET['label_mascotas']) ? $_GET['label_mascotas'] : ''; ?>" required>
@@ -310,10 +317,11 @@ function getTextoByIdioma($idIdioma, $textos)
                                                 'label_fn_general' => $texto->label_fn_general,
                                                 'label_fn_especial' => $texto->label_fn_especial,
                                                 'label_reservar' => $texto->label_reservar,
-                                                'label_edad_adultos' => $texto->label_edad_adultos,
-                                                'label_edad_ninos' => $texto->label_edad_ninos,
-                                                'label_edad_seniors' => $texto->label_edad_seniors,
-                                                'label_edad_bebes' => $texto->label_edad_bebes,
+                                                'label_anos' => $texto->label_anos,
+                                                // 'label_edad_adultos' => $texto->label_edad_adultos,
+                                                // 'label_edad_ninos' => $texto->label_edad_ninos,
+                                                // 'label_edad_seniors' => $texto->label_edad_seniors,
+                                                // 'label_edad_bebes' => $texto->label_edad_bebes,
                                                 'label_mascotas' => $texto->label_mascotas,
                                                 'label_anadir_vehiculo' => $texto->label_anadir_vehiculo,
                                                 'label_tipo_vehiculo' => $texto->label_tipo_vehiculo,
